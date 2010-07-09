@@ -33,6 +33,7 @@
 import os
 import sys
 import vim
+import textwrap
 import xml.dom.minidom
 
 from ui import DebugUI
@@ -341,7 +342,20 @@ class Debugger:
                 self.command('stack_get')
         else:
             self.clear()
-            self.protocol.accept()
+            if not self.protocol.accept():
+                print textwrap.dedent('''\
+                        Unable to connect to debug server. Things to check:
+                            - you refreshed the page during the 5 second
+                              period
+                            - you have the xdebug extension installed (apt-get
+                              install php5-xdebug on ubuntu)
+                            - you set the XDEBUG_SESSION_START cookie
+                            - "xdebug.remote_enable = 1" is in php.ini (not
+                              enabled by default)
+                        If you have any questions, look at
+                            http://tech.blog.box.net/2007/06/20/how-to-debug-php-with-vim-and-xdebug-on-linux/
+                        ''')
+                return False
             self.ui.debug_mode()
             self.running = 1
 
