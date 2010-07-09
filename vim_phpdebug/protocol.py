@@ -8,11 +8,12 @@ class DbgProtocol:
         socket.setdefaulttimeout(5)
         self.port = port
         self.sock = None
-        self.isconned = 0
+        self.isconned = False
     def isconnected(self):
         return self.isconned
     def accept(self):
         print 'waiting for a new connection on port '+str(self.port)+' for 5 seconds...'
+        self.isconned = False
         serv = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         try:
             serv.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
@@ -24,11 +25,12 @@ class DbgProtocol:
             self.close()
             # self.stop()
             print 'timeout'
-            return
+            return False
 
         print 'connection from ', address
-        self.isconned = 1
+        self.isconned = True
         serv.close()
+        return True
     def close(self):
         if self.sock != None:
             self.sock.close()
