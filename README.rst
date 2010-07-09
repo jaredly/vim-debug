@@ -1,5 +1,5 @@
-Maintainer: Jared Forsyth <jared@jaredforsyth.com>
-Source: http://github.com/jabapyth/vim-phpdebug
+.. Maintainer: Jared Forsyth <jared@jaredforsyth.com>
+.. Source: http://github.com/jabapyth/vim-phpdebug
 
 This plugin creates an integrated debugging environment in VIM for PHP debugging.
 
@@ -20,7 +20,6 @@ Screenshot: `[full size] <http://jaredforsyth.com/media/uploads/Terminal_019.jpe
 
 .. image:: http://jaredforsyth.com/media/uploads/Terminal_019.jpeg
     :width: 450
-
 
 **Credits:**
 
