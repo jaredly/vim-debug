@@ -93,7 +93,19 @@ if !has("python")
 endif
 
 " Load the debugger [should be on the PYTHONPATH]
-python from vim_phpdebug.commands import *
+python << EOF
+import vim
+try:
+    from vim_phpdebug.commands import *
+    vim.command('let has_phpdebug = 1')
+except ImportError:
+    vim.command('let has_phpdebug = 0')
+    print 'python module vim_phpdebug not found...'
+EOF
+
+if !has_phpdebug
+    finish
+endif
 
 " Load debugger.py either from the runtime directory (usually
 " /usr/local/share/vim/vim71/plugin/ if you're running Vim 7.1) or from the
