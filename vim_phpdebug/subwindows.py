@@ -119,6 +119,7 @@ class WatchWindow(VimWindow):
         else:
             self.buffer.append('/*{{{1*/ => '+mode+': '+arg)
         self.command('normal G')
+
     def get_command(self):
         line = self.buffer[-1]
         if line[0:17] == '/*{{{1*/ => exec:':

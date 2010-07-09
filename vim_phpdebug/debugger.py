@@ -33,6 +33,7 @@
 import os
 import sys
 import vim
+import base64
 import textwrap
 import xml.dom.minidom
 

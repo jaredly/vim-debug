@@ -32,6 +32,34 @@ def debugger_init(debug = 0):
 
     debugger = Debugger(port, max_children, max_data, max_depth, minibufexpl, debug)
 
+import shlex
+
+_commands = {}
+def debugger_cmd(plain):
+    if ' ' in plain:
+        name, plain = plain.split(' ', 1)
+        args = shlex.split(plain)
+    else:
+        name = plain
+        plain = ''
+        args = []
+    if name not in _commands:
+        print '[usage:] dbg command [options]'
+        for command in _commands:
+            print ' - ', command, '      ::', _commands[command]['help']
+        return
+    cmd = _commands[name]
+    if cmd['plain']:
+        return cmd['cmd'](plain)
+    else:
+        cmd['cmd'](*args)
+
+def cmd(name, help='', plain=False):
+    def decor(fn):
+        _commands[name] = {'cmd':fn, 'help':help, 'plain':plain}
+        return fn
+    return decor
+
 def debugger_command(msg, arg1 = '', arg2 = ''):
     try:
         debugger.command(msg, arg1, arg2)
@@ -42,6 +70,7 @@ def debugger_command(msg, arg1 = '', arg2 = ''):
         debugger.stop()
         print 'Connection closed, stop debugging', sys.exc_info()
 
+@cmd('run', 'run until the next break point (or the end)')
 def debugger_run():
     try:
         debugger.run()
@@ -51,6 +80,7 @@ def debugger_run():
         debugger.stop()
         print 'Connection closed, stop debugging', sys.exc_info()
 
+# @cmd('watch', 'watch a value')
 def debugger_watch_input(cmd, arg = ''):
     try:
         if arg == '<cword>':
@@ -62,6 +92,7 @@ def debugger_watch_input(cmd, arg = ''):
         debugger.stop()
         print 'Connection closed, stop debugging'
 
+@cmd('ctx', 'refresh the context (scope)')
 def debugger_context():
     try:
         debugger.command('context_get')
@@ -70,6 +101,10 @@ def debugger_context():
         debugger.ui.windows['trace'].write("".join(traceback.format_tb( sys.exc_info()[2])))
         debugger.stop()
         print 'Connection closed, stop debugging'
+
+@cmd('e', 'eval some text', plain=True)
+def debugger_eval(stuff):
+    debugger.command("eval", '', stuff)
 
 def debugger_property(name = ''):
     try:
