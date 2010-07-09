@@ -98,7 +98,7 @@ import vim
 try:
     from vim_phpdebug.commands import *
     vim.command('let has_phpdebug = 1')
-except ImportError:
+except ImportError, e:
     vim.command('let has_phpdebug = 0')
     print 'python module vim_phpdebug not found...'
 EOF

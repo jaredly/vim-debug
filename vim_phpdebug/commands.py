@@ -37,8 +37,8 @@ def debugger_command(msg, arg1 = '', arg2 = ''):
         debugger.command(msg, arg1, arg2)
         debugger.update()
     except:
-        debugger.ui.tracewin.write(sys.exc_info())
-        debugger.ui.tracewin.write("".join(traceback.format_tb( sys.exc_info()[2])))
+        debugger.ui.windows['trace'].write(sys.exc_info())
+        debugger.ui.windows['trace'].write("".join(traceback.format_tb( sys.exc_info()[2])))
         debugger.stop()
         print 'Connection closed, stop debugging', sys.exc_info()
 
@@ -46,8 +46,8 @@ def debugger_run():
     try:
         debugger.run()
     except:
-        debugger.ui.tracewin.write(sys.exc_info())
-        debugger.ui.tracewin.write("".join(traceback.format_tb( sys.exc_info()[2])))
+        debugger.ui.windows['trace'].write(sys.exc_info())
+        debugger.ui.windows['trace'].write("".join(traceback.format_tb( sys.exc_info()[2])))
         debugger.stop()
         print 'Connection closed, stop debugging', sys.exc_info()
 
@@ -57,8 +57,8 @@ def debugger_watch_input(cmd, arg = ''):
             arg = vim.eval('expand("<cword>")')
         debugger.watch_input(cmd, arg)
     except:
-        debugger.ui.tracewin.write( sys.exc_info() )
-        debugger.ui.tracewin.write( "".join(traceback.format_tb(sys.exc_info()[2])) )
+        debugger.ui.windows['trace'].write( sys.exc_info() )
+        debugger.ui.windows['trace'].write( "".join(traceback.format_tb(sys.exc_info()[2])) )
         debugger.stop()
         print 'Connection closed, stop debugging'
 
@@ -66,8 +66,8 @@ def debugger_context():
     try:
         debugger.command('context_get')
     except:
-        debugger.ui.tracewin.write(sys.exc_info())
-        debugger.ui.tracewin.write("".join(traceback.format_tb( sys.exc_info()[2])))
+        debugger.ui.windows['trace'].write(sys.exc_info())
+        debugger.ui.windows['trace'].write("".join(traceback.format_tb( sys.exc_info()[2])))
         debugger.stop()
         print 'Connection closed, stop debugging'
 
@@ -75,8 +75,8 @@ def debugger_property(name = ''):
     try:
         debugger.property_get()
     except:
-        debugger.ui.tracewin.write(sys.exc_info())
-        debugger.ui.tracewin.write("".join(traceback.format_tb( sys.exc_info()[2])))
+        debugger.ui.windows['trace'].write(sys.exc_info())
+        debugger.ui.windows['trace'].write("".join(traceback.format_tb( sys.exc_info()[2])))
         debugger.stop()
         print 'Connection closed, stop debugging', sys.exc_info()
 
@@ -84,8 +84,8 @@ def debugger_mark(exp = ''):
     try:
         debugger.mark(exp)
     except:
-        debugger.ui.tracewin.write(sys.exc_info())
-        debugger.ui.tracewin.write("".join(traceback.format_tb( sys.exc_info()[2])))
+        debugger.ui.windows['trace'].write(sys.exc_info())
+        debugger.ui.windows['trace'].write("".join(traceback.format_tb( sys.exc_info()[2])))
         debugger.stop()
         print 'Connection closed, stop debugging', sys.exc_info()
 
@@ -93,8 +93,8 @@ def debugger_up():
     try:
         debugger.up()
     except:
-        debugger.ui.tracewin.write(sys.exc_info())
-        debugger.ui.tracewin.write("".join(traceback.format_tb( sys.exc_info()[2])))
+        debugger.ui.windows['trace'].write(sys.exc_info())
+        debugger.ui.windows['trace'].write("".join(traceback.format_tb( sys.exc_info()[2])))
         debugger.stop()
         print 'Connection closed, stop debugging', sys.exc_info()
 
@@ -102,8 +102,8 @@ def debugger_down():
     try:
         debugger.down()
     except:
-        debugger.ui.tracewin.write(sys.exc_info())
-        debugger.ui.tracewin.write("".join(traceback.format_tb( sys.exc_info()[2])))
+        debugger.ui.windows['trace'].write(sys.exc_info())
+        debugger.ui.windows['trace'].write("".join(traceback.format_tb( sys.exc_info()[2])))
         debugger.stop()
         print 'Connection closed, stop debugging', sys.exc_info()
 

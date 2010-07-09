@@ -7,10 +7,13 @@ class DebugUI:
     """ DEBUGUI class """
     def __init__(self, minibufexpl = 0):
         """ initialize object """
-        self.watchwin = WatchWindow()
-        self.stackwin = StackWindow()
-        self.tracewin = TraceWindow()
-        self.helpwin  = HelpWindow('HELP__WINDOW')
+        self.windows = {
+            'watch':WatchWindow(),
+            'stack':StackWindow(),
+            'trace':TraceWindow(),
+            'help':HelpWindow('HELP__WINDOW'),
+            #'status':StatusWindow()
+        }
         self.mode     = 0 # normal mode
         self.file     = None
         self.line     = None
@@ -72,10 +75,10 @@ class DebugUI:
 
     def create(self):
         """ create windows """
-        self.watchwin.create('vertical belowright new')
-        self.helpwin.create('belowright new')
-        self.stackwin.create('belowright new')
-        self.tracewin.create('belowright new')
+        self.windows['watch'].create('vertical belowright new')
+        self.windows['help'].create('belowright new')
+        self.windows['stack'].create('belowright new')
+        self.windows['trace'].create('belowright new')
 
     def set_highlight(self):
         """ set vim highlight of debugger sign """
@@ -84,17 +87,18 @@ class DebugUI:
 
     def destroy(self):
         """ destroy windows """
-        self.helpwin.destroy()
-        self.watchwin.destroy()
-        self.stackwin.destroy()
-        self.tracewin.destroy()
+        for window in self.windows.values():
+            window.destroy()
+
     def go_srcview(self):
         vim.command('1wincmd w')
+
     def next_sign(self):
         if self.cursign == '1':
             return '2'
         else:
             return '1'
+
     def set_srcview(self, file, line):
         """ set srcview windows to file:line and replace current sign """
 

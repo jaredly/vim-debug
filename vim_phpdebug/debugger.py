@@ -135,7 +135,7 @@ class Debugger:
         self.protocol.send_msg(msg)
         # log message
         if self.debug:
-            self.ui.tracewin.write(str(self.msgid) + ' : send =====> ' + msg)
+            self.ui.windows['trace'].write(str(self.msgid) + ' : send =====> ' + msg)
     def recv(self, count=10000):
         """ receive message until response is last transaction id or received count's message """
         while count>0:
@@ -145,8 +145,8 @@ class Debugger:
             res = xml.dom.minidom.parseString(txt)
             # log messages {{{
             if self.debug:
-                self.ui.tracewin.write( str(self.msgid) + ' : recv <===== {{{     ' + txt)
-                self.ui.tracewin.write('}}}')
+                self.ui.windows['trace'].write( str(self.msgid) + ' : recv <===== {{{     ' + txt)
+                self.ui.windows['trace'].write('}}}')
             # handle message
             self.handle_msg(res)
             # exit, if response's transaction id == last transaction id
@@ -224,7 +224,7 @@ class Debugger:
 
     def handle_response_error(self, res):
         """ handle <error> tag """
-        self.ui.tracewin.write_xml_childs(res)
+        self.ui.windows['trace'].write_xml_childs(res)
 
     def handle_response_stack_get(self, res):
         """handle <response command=stack_get> tag
@@ -245,10 +245,10 @@ class Debugger:
                                      'level': int(s.getAttribute('level'))
                                      } )
 
-            self.ui.stackwin.clean()
-            self.ui.stackwin.highlight_stack(self.curstack)
+            self.ui.windows['stack'].clean()
+            self.ui.windows['stack'].highlight_stack(self.curstack)
 
-            self.ui.stackwin.write_xml_childs(res.firstChild) #str(res.toprettyxml()))
+            self.ui.windows['stack'].write_xml_childs(res.firstChild) #str(res.toprettyxml()))
             self.ui.set_srcview( self.stacks[self.curstack]['file'], self.stacks[self.curstack]['line'] )
 
 
@@ -299,16 +299,16 @@ class Debugger:
             #    pass
     def handle_response_eval(self, res):
         """handle <response command=eval> tag """
-        self.ui.watchwin.write_xml_childs(res)
+        self.ui.windows['watch'].write_xml_childs(res)
     def handle_response_property_get(self, res):
         """handle <response command=property_get> tag """
-        self.ui.watchwin.write_xml_childs(res)
+        self.ui.windows['watch'].write_xml_childs(res)
     def handle_response_context_get(self, res):
         """handle <response command=context_get> tag """
-        self.ui.watchwin.write_xml_childs(res)
+        self.ui.windows['watch'].write_xml_childs(res)
     def handle_response_feature_set(self, res):
         """handle <response command=feature_set> tag """
-        self.ui.watchwin.write_xml_childs(res)
+        self.ui.windows['watch'].write_xml_childs(res)
     def handle_response_status(self, res):
         self.status = res.firstChild.getAttribute('status')
     def handle_response_default(self, res):
@@ -395,13 +395,13 @@ class Debugger:
     def up(self):
         if self.curstack > 0:
             self.curstack -= 1
-            self.ui.stackwin.highlight_stack(self.curstack)
+            self.ui.windows['stack'].highlight_stack(self.curstack)
             self.ui.set_srcview(self.stacks[self.curstack]['file'], self.stacks[self.curstack]['line'])
 
     def down(self):
         if self.curstack < self.laststack:
             self.curstack += 1
-            self.ui.stackwin.highlight_stack(self.curstack)
+            self.ui.windows['stack'].highlight_stack(self.curstack)
             self.ui.set_srcview(self.stacks[self.curstack]['file'], self.stacks[self.curstack]['line'])
 
     def mark(self, exp = ''):
@@ -427,17 +427,17 @@ class Debugger:
                 self.recv()
 
     def watch_input(self, mode, arg = ''):
-        self.ui.watchwin.input(mode, arg)
+        self.ui.windows['watch'].input(mode, arg)
 
     def property_get(self, name = ''):
         if name == '':
             name = vim.eval('expand("<cword>")')
-        self.ui.watchwin.write('--> property_get: '+name)
+        self.ui.windows['watch'].write('--> property_get: '+name)
         self.command('property_get', '-n '+name)
         
     def watch_execute(self):
         """ execute command in watch window """
-        (cmd, expr) = self.ui.watchwin.get_command()
+        (cmd, expr) = self.ui.windows['watch'].get_command()
         if cmd == 'exec':
             self.command('exec', '', expr)
             print cmd, '--', expr
