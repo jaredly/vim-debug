@@ -1,7 +1,7 @@
 # -*- c--oding: ko_KR.UTF-8 -*-
 # remote PHP debugger : remote debugger interface to DBGp protocol
 #
-# Copyright (c) 2003-2006 ActiveState Software Inc.
+# Copyright (c) 2010 Jared Forsyth
 #
 # The MIT License
 #
@@ -28,6 +28,7 @@
 # Authors:
 #    Seung Woo Shin <segv <at> sayclub.com>
 #    Sam Ghods <sam <at> box.net>
+#    Jared Forsyth <jared@jaredforsyth.com>
 
 """
 	debugger.py -- DBGp client: a remote debugger interface to DBGp protocol
@@ -53,79 +54,6 @@ import socket
 import base64
 import traceback
 import xml.dom.minidom
-
-#######################################################################################################################
-#                                                                                                                     #
-# this diagram is little outdated.                                                                                    #
-#                                                                                                                     #
-#                                                                                                                     #
-#                          +---[ class Debugger ]-----------+                                                         #
-#                          |     [m] run()                  |                                                         #
-#                          |     [m] mark()                 |                                                         #
-#                          |     [m] command()              |                                                         #
-#                          |     [m] stop()                 |                                                         #
-#                     +--------- [m] handle_msg() ------------------+                                                 #
-#                     |    |                                |       |  handle all other tags                          #
-#     if error        +--------> [m] handle_error()         |       |    comming from server                          #
-#                     |    |     [m] handle_*()   <-----------------+                                                 #
-#                     |    |                                |                                                         #
-#     if <response >  +--------> [m] handle_response() -------------+                                                 #
-#                          |                                |       |  if <response command='*'>                      #
-#                          |     [m] handle_response_*() <----------+                                                 #
-#                          |                                |                                                         #
-#                          |  +--[ class DbgProtocol ]--+   |                                                         #
-# +-------+  1. connect    |  |                         |   |                                                         #
-# |debug  | ---------------------> [m] accept()         |   |                                                         #
-# |       | <-- 2. send ---------- [m] send_msg()       |   |                                                         #
-# | server| --- 3. recv ---------> [m] recv_msg()       |   |                                                         #
-# +-------+                |  |                         |   |                                                         #
-#                          |  +-------------------------+   |                                                         #
-#                          |                                |                                                         #
-#                          |  +--[ class BreakPoint ]---+   |                                                         #
-#                          |  |    manage breakpoints   |   |                                                         #
-#                          |  |    [m] add()            |   |                                                         #
-#                          |  |    [m] remove()         |   |                                                         #
-#                          |  |    [m] list()           |   |                                                         #
-#                          |  +-------------------------+   |                             VIM                         #
-#                          |                                |                +--------------+-----+                   #                 
-#  [m] method              |  +--[ class DebugUI ]------+   |                |              |     |  <----+           #
-#  [f] class               |  |    [m] debug_mode()     | ------------------ |              +-----+       |           #
-#                          |  |    [m] normal_mode()    |   |   controls     |  srv         |     |  <----+           #
-#                          |  |    [m] goto()           |   |    all vim     |    view      +-----+       |           #
-#                          |  |    [m] stackwrite()     |   |     windows    |              |     |  <----+           #
-#                          |  |    [m] stackwrite()     |   |                |              +-----+       |           #
-#                          |  +-------------------------+   |                |              |     |  <----+           #
-#                          |                                |                |              +-----+       |           #
-#                          |  +--[ class VimWindow ]----+   |                |              |     |  <----+           #
-#                          |  |    [m] create()         |   |                +--------------+-----+       |           #
-#                          |  |    [m] write()          |   |                                             |           #
-#                          |  |    [m] create()         | ------------------------------------------------+           #              
-#                          |  |    [m] create()         |   |    controls each debug window                           #
-#                          |  +-------------------------+   |     (except src view)                                   #
-#                          |                                |                                                         #
-#                          +--------------------------------+                                                         #
-#                                                                                                                     #
-#  global debugger  <----+                                                                                            #
-#                        | creates                                                                                    #
-#  [f] debugger_init() --+                                                                                            #
-#  [f] debugger_run()      <-+                                                                                        #
-#  [f] debugger_context()    |                                                                                        #
-#  [f] debugger_command()    +------ map <F5> :python debugger_run()                                                  #
-#  [f] debugger_stop()       |         ... etc ...                                                                    #
-#  [f] debugger_mark()     <-+                                                                                        #
-#                                                                                                                     #
-#                                                                                                                     #
-#######################################################################################################################
-
-#class XMLPrintFold(XMLPrint):
-#  def fixup_childs(self, line, node, level):
-#    line = ('{{{' + str(level+1)).ljust(level*4+6) + line +  '\n'
-#    line += self.xml_stringfy_childs(node, level+1)
-#    line += '}}}' + str(level+1) + '\n'
-#    return line
-#  def fixup_single(self, line, node, level):
-#    return ''.ljust(level*4+6) + line + '\n'
-#
 
 class VimWindow:
     """ wrapper class of window of vim """

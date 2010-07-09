@@ -2,7 +2,7 @@
 "
 " Script Info and Documentation  {{{
 "=============================================================================
-"    Copyright: Copyright (C) 2007 Sam Ghods
+"    Copyright: Copyright (C) 2010 Jared Forsyth
 "      License:	The MIT License
 "				
 "				Permission is hereby granted, free of charge, to any person obtaining
@@ -25,10 +25,10 @@
 "				SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 " Name Of File: debugger.vim, debugger.py
 "  Description: remote debugger interface to DBGp protocol
-"   Maintainer: Sam Ghods <sam <at> box.net>
-"  Last Change: June 18, 2007
-"          URL: http://www.vim.org/scripts/script.php?script_id=1929
-"      Version: 1.1.1
+"   Maintainer: Jared Forsyth <jared@jaredforsyth.com>
+"  Last Change: July 9, 2010
+"          URL: http://jaredforsyth.com/projects/vim-phpdebug
+"      Version: 1.2
 "               Originally written by Seung Woo Shin <segv <at> sayclub.com>
 "               The original script is located at:
 "				http://www.vim.org/scripts/script.php?script_id=1152
@@ -78,30 +78,6 @@
 "               enable this support, add the following line to your vimrc:
 "
 "                 let g:debuggerMiniBufExpl = 1
-"
-"      History: 1.1.1 o Added a check so the script doesn't load if python is
-"                     not compiled in. (Contributed by Lars Becker.)
-"               1.1   o Added vim variable to change port.
-"                     o You can now put debugger.py in either runtime directory
-"                     or the home directory.
-"                     o Added to ability to change max children, data and depth
-"                     settings.
-"                     o Made it so stack_get wouldn't be called if the debugger
-"                     has already stopped.
-"                     o Added support for minibufexpl.vim.
-"                     o License added.
-"               1.0   o Initial release on December 7, 2004
-"      
-" Known Issues: The code is designed for the DBGp protocol, but it has only been
-" 				tested with XDebug 2.0RC4. If anyone would like to contribute patches
-" 				to get it working with other DBGp software, I would be happy
-" 				to implement them.
-"
-" 				Sometimes things go a little crazy... breakpoints don't show
-" 				up, too many windows are created / not enough are closed, and
-" 				so on... if you can actually find a set of solidly
-" 				reproducible steps that lead to a bug, please do e-mail <sam
-" 				<at> box.net> and I will take a look.
 " 
 "         Todo: Compatibility for other DBGp engines.
 "
@@ -121,6 +97,10 @@ endif
 " home vim directory (usually ~/.vim/plugin/).
 if filereadable($VIMRUNTIME."/plugin/debugger.py")
   pyfile $VIMRUNTIME/plugin/debugger.py
+elseif filereadable($VIMRUNTIME."/plugin/phpdebug/debugger.py")
+  pyfile $VIMRUNTIME/plugin/phpdebug/debugger.py
+elseif filereadable($HOME."/.vim/plugin/phpdebug/debugger.py")
+  pyfile $HOME/.vim/plugin/phpdebug/debugger.py
 elseif filereadable($HOME."/.vim/plugin/debugger.py")
   pyfile $HOME/.vim/plugin/debugger.py
 else
