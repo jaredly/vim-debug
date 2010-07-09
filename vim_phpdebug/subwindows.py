@@ -1,4 +1,5 @@
 from window import VimWindow
+import errors
 
 class StackWindow(VimWindow):
     '''Keeps track of the current execution stack'''
@@ -42,7 +43,7 @@ class TraceWindow(VimWindow):
         else:
             desc = ''
             if node.hasAttribute('code'):
-                desc = ' : '+error_msg[int(node.getAttribute('code'))]
+                desc = ' : '+errors.error_msg[int(node.getAttribute('code'))]
             return VimWindow.xml_on_element(self, node) + desc
     def on_create(self):
         self.command('set nowrap fdm=marker fmr={{{,}}} fdl=0')
@@ -152,6 +153,5 @@ class HelpWindow(VimWindow):
         '  <F12>  get property at cursor   |                       \n'
         '\n')
         self.command('1')
-
 
 # vim: et sw=4 sts=4

@@ -155,6 +155,7 @@ class Debugger:
                     return
             except:
                 pass
+
     def send_command(self, cmd, arg1 = '', arg2 = ''):
         """ send command (do not receive response) """
         self.msgid = self.msgid + 1
@@ -195,6 +196,7 @@ class Debugger:
         try:
             handler = getattr(self, 'handle_response_' + command)
         except AttributeError:
+            print res.toprettyxml()
             print 'Debugger.handle_response_'+command+'() not found, please see the LOG___WINDOW'
             return
         handler(res)
@@ -237,11 +239,11 @@ class Debugger:
 
             self.stacks = []
             for s in stacks:
-                self.stacks.append( {'file':    s.getAttribute('filename')[7:], \
-                                                         'line':    int(s.getAttribute('lineno')),    \
-                                                         'where': s.getAttribute('where'),                \
-                                                         'level': int(s.getAttribute('level'))
-                                                         } )
+                self.stacks.append( {'file': s.getAttribute('filename')[7:],
+                                     'line': int(s.getAttribute('lineno')),
+                                     'where': s.getAttribute('where'),
+                                     'level': int(s.getAttribute('level'))
+                                     } )
 
             self.ui.stackwin.clean()
             self.ui.stackwin.highlight_stack(self.curstack)
@@ -307,6 +309,8 @@ class Debugger:
     def handle_response_feature_set(self, res):
         """handle <response command=feature_set> tag """
         self.ui.watchwin.write_xml_childs(res)
+    def handle_response_status(self, res):
+        self.status = res.firstChild.getAttribute('status')
     def handle_response_default(self, res):
         """handle <response command=context_get> tag """
         print res.toprettyxml()
@@ -334,12 +338,12 @@ class Debugger:
         msgid = self.send_command(cmd, arg1, arg2)
         self.recv()
         return msgid
+
     def run(self):
         """ start debugger or continue """
         if self.protocol.isconnected():
             self.command('run')
-            if self.status != 'stopped':
-                self.command('stack_get')
+            self.update()
         else:
             self.clear()
             if not self.protocol.accept():
@@ -370,9 +374,9 @@ class Debugger:
 
             flag = 0
             for bno in self.breakpt.list():
-                msgid = self.send_command('breakpoint_set', \
-                                                                    '-t line -f ' + self.breakpt.getfile(bno) + ' -n ' + str(self.breakpt.getline(bno)) + ' -s enabled', \
-                                                                    self.breakpt.getexp(bno))
+                msgid = self.send_command('breakpoint_set',
+                 '-t line -f ' + self.breakpt.getfile(bno) + ' -n ' + str(self.breakpt.getline(bno)) + ' -s enabled',
+                 self.breakpt.getexp(bno))
                 self.bptsetlst[msgid] = bno
                 flag = 1
             if flag:
@@ -449,6 +453,22 @@ class Debugger:
         else:
             print "no commands", cmd, expr
 
+    def update(self):
+        self.command('status')
+        if self.status == 'break':
+            self.command('stack_get')
+        elif self.status == 'stopping':
+            print 'Execution has finished (exiting)'
+            vim.command(':!')
+            self.quit()
+        elif self.status == 'starting':
+            print 'Execution hasn\'t started yet...'
+        elif self.status == 'running':
+            print 'Code is running right now...'
+        elif self.status == 'stopped':
+            print 'We\'ve been disconnected! (exiting)'
+            vim.command(':!')
+            self.quit()
 
     #
     #

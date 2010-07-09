@@ -35,8 +35,7 @@ def debugger_init(debug = 0):
 def debugger_command(msg, arg1 = '', arg2 = ''):
     try:
         debugger.command(msg, arg1, arg2)
-        if debugger.status != 'stopped':
-            debugger.command('stack_get')
+        debugger.update()
     except:
         debugger.ui.tracewin.write(sys.exc_info())
         debugger.ui.tracewin.write("".join(traceback.format_tb( sys.exc_info()[2])))
