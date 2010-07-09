@@ -12,6 +12,7 @@ Features:
 
 Planned:
 
+- live interactive console (through eval)
 - conditional breakpoints
 - watch expressions
 - live scope view
@@ -20,6 +21,8 @@ Screenshot: `[full size] <http://jaredforsyth.com/media/uploads/Terminal_019.jpe
 
 .. image:: http://jaredforsyth.com/media/uploads/Terminal_019.jpeg
     :width: 450
+
+`xdebug docs <http://www.xdebug.org/docs-dbgp.php>`_
 
 **Credits:**
 
