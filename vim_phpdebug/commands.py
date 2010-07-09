@@ -1,7 +1,9 @@
+import sys
 import vim
+import traceback
+from debugger import Debugger
 
 def debugger_init(debug = 0):
-    return ## temporarily disbling
     global debugger
 
     # get needed vim variables
