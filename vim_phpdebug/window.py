@@ -2,11 +2,14 @@ import vim
 
 class VimWindow:
     """ wrapper class of window of vim """
-    def __init__(self, name = 'DEBUG_WINDOW'):
+    def __init__(self, name = 'DEBUG_WINDOW', special=True, height=0):
         """ initialize """
         self.name = name
         self.buffer = None
+        self.height = height
         self.firstwrite = 1
+        self.special = special
+
     def isprepared(self):
         """ check window is OK """
         if self.buffer == None or len(dir(self.buffer)) == 0 or self.getwinnr() == -1:
@@ -49,22 +52,33 @@ class VimWindow:
     def write(self, msg):
         """ append last """
         self.prepare()
+        # cn = vim.current.buffer.number
+        # vim.command('b! %d' % self.buffer.number)
+        # vim.command("setlocal modifiable")
         if self.firstwrite == 1:
             self.firstwrite = 0
             self.buffer[:] = str(msg).split('\n')
         else:
             self.buffer.append(str(msg).split('\n'))
+        # vim.command("setlocal nomodifiable")
+        # vim.command('b! %d' % cn)
         self.command('normal G')
         #self.window.cursor = (len(self.buffer), 1)
+
     def create(self, method = 'new'):
         """ create window """
         vim.command('silent ' + method + ' ' + self.name)
         #if self.name != 'LOG___WINDOW':
         vim.command("setlocal buftype=nofile")
+        vim.command("setlocal nobuflisted")
+        # vim.command("setlocal nomodifiable")
         self.buffer = vim.current.buffer
-        self.width    = int( vim.eval("winwidth(0)")    )
+        if self.height != 0:
+            vim.command('res %d' % self.height)
+        self.width = int( vim.eval("winwidth(0)") )
         self.height = int( vim.eval("winheight(0)") )
         self.on_create()
+
     def destroy(self):
         """ destroy window """
         if self.buffer == None or len(dir(self.buffer)) == 0:
@@ -72,13 +86,15 @@ class VimWindow:
         #if self.name == 'LOG___WINDOW':
         #    self.command('hide')
         #else:
-        self.command('bdelete ' + self.name)
+        self.command('bd %d' % self.buffer.number)
         self.firstwrite = 1
+
     def clean(self):
         """ clean all datas in buffer """
         self.prepare()
         self.buffer[:] = []
         self.firstwrite = 1
+
     def command(self, cmd):
         """ go to my window & execute command """
         self.prepare()

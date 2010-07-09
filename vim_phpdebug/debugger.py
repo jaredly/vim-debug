@@ -458,9 +458,7 @@ class Debugger:
         if self.status == 'break':
             self.command('stack_get')
         elif self.status == 'stopping':
-            print 'Execution has finished (exiting)'
-            vim.command(':!')
-            self.quit()
+            self.command('stack_get')
         elif self.status == 'starting':
             print 'Execution hasn\'t started yet...'
         elif self.status == 'running':
