@@ -96,7 +96,7 @@ endif
 python << EOF
 import vim
 try:
-    from vim_phpdebug.commands import *
+    from vim_phpdebug.commands import debugger_cmd
     vim.command('let has_phpdebug = 1')
 except ImportError, e:
     vim.command('let has_phpdebug = 0')
@@ -107,65 +107,35 @@ if !has_phpdebug
     finish
 endif
 
-" Load debugger.py either from the runtime directory (usually
-" /usr/local/share/vim/vim71/plugin/ if you're running Vim 7.1) or from the
-" home vim directory (usually ~/.vim/plugin/).
-"if filereadable($VIMRUNTIME."/plugin/phpdebug.py")
-"  pyfile $VIMRUNTIME/plugin/phpdebug.py
-"elseif filereadable($HOME."/.vim/plugin/phpdebug.py")
-"  pyfile $HOME/.vim/plugin/phpdebug.py
-"else
-"  call confirm('debugger.vim: Unable to find phpdebug.py. Place it in either your home vim directory or in the Vim runtime directory.', 'OK')
-"endif
+"map <F1> :python debugger_resize()<cr>
+"map <F2> :python debugger_command('step_into')<cr>
+"map <F3> :python debugger_command('step_over')<cr>
+"map <F4> :python debugger_command('step_out')<cr>
 
-map <F1> :python debugger_resize()<cr>
-map <F2> :python debugger_command('step_into')<cr>
-map <F3> :python debugger_command('step_over')<cr>
-map <F4> :python debugger_command('step_out')<cr>
+"map <Leader>dr :python debugger_resize()<cr>
+"map <Leader>di :python debugger_command('step_into')<cr>
+"map <Leader>do :python debugger_command('step_over')<cr>
+"map <Leader>dt :python debugger_command('step_out')<cr>
+"
+"nnoremap ,e :python debugger_watch_input("eval")<cr>A
 
-map <Leader>dr :python debugger_resize()<cr>
-map <Leader>di :python debugger_command('step_into')<cr>
-map <Leader>do :python debugger_command('step_over')<cr>
-map <Leader>dt :python debugger_command('step_out')<cr>
+"map <F5> :python debugger_run()<cr>
+"map <F6> :python debugger_quit()<cr>
 
-nnoremap ,e :python debugger_watch_input("eval")<cr>A
+"map <F7> :python debugger_command('step_into')<cr>
+"map <F8> :python debugger_command('step_over')<cr>
+"map <F9> :python debugger_command('step_out')<cr>
 
-map <F5> :python debugger_run()<cr>
-map <F6> :python debugger_quit()<cr>
-
-map <F7> :python debugger_command('step_into')<cr>
-map <F8> :python debugger_command('step_over')<cr>
-map <F9> :python debugger_command('step_out')<cr>
-
-map <F11> :python debugger_context()<cr>
-map <F12> :python debugger_property()<cr>
-map <F11> :python debugger_watch_input("context_get")<cr>A<cr>
-map <F12> :python debugger_watch_input("property_get", '<cword>')<cr>A<cr>
-
-hi DbgCurrent term=reverse ctermfg=White ctermbg=Red gui=reverse
-hi DbgBreakPt term=reverse ctermfg=White ctermbg=Green gui=reverse
+"map <F11> :python debugger_context()<cr>
+"map <F12> :python debugger_property()<cr>
+"map <F11> :python debugger_watch_input("context_get")<cr>A<cr>
+"map <F12> :python debugger_watch_input("property_get", '<cword>')<cr>A<cr>
 
 command! -nargs=* Dbg python debugger_cmd('<args>')
-cabbrev dbg Dbg
-command! -nargs=? Bp python debugger_mark('<args>')
-command! -nargs=0 Up python debugger_up()
-command! -nargs=0 Dn python debugger_down()
+
+" Debugger highlighting
+hi DbgCurrent term=reverse ctermfg=White ctermbg=Red gui=reverse
+hi DbgBreakPt term=reverse ctermfg=White ctermbg=Green gui=reverse
 sign define current text=->  texthl=DbgCurrent linehl=DbgCurrent
 sign define breakpt text=B>  texthl=DbgBreakPt linehl=DbgBreakPt
 
-if !exists('g:debuggerPort')
-  let g:debuggerPort = 9000
-endif 
-if !exists('g:debuggerMaxChildren')
-  let g:debuggerMaxChildren = 32
-endif
-if !exists('g:debuggerMaxData')
-  let g:debuggerMaxData = 1024
-endif
-if !exists('g:debuggerMaxDepth')
-  let g:debuggerMaxDepth = 1
-endif
-if !exists('g:debuggerMiniBufExpl')
-  let g:debuggerMiniBufExpl = 0
-endif
-python debugger_init(1)

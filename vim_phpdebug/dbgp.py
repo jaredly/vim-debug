@@ -55,7 +55,7 @@ class DBGP:
                 else:
                     raise TypeError('invalid packet type:', cmd)
             elif packet.tagName == 'stream':
-                if '<stream>' in self.handlers:
+                if '<stream>' in self.handlers and packet.firstChild is not None:
                     text = base64.decodestring(packet.firstChild.data)
                     self.handlers['<stream>'](packet.getAttribute('type'), text)
             elif packet.tagName == 'init':
@@ -74,7 +74,7 @@ class PacketSocket:
                                                                              self.options.get('wait', 5))
         self.connected = False
         serv = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-        socket.setdefaulttimeout(self.options.get('wait', 5))
+        socket.setdefaulttimeout(self.options.get('wait', 10))
         try:
             serv.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
             serv.bind(('', self.options.get('port', 9000)))

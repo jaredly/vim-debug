@@ -77,10 +77,10 @@ class DebugUI:
     def create(self):
         """ create windows """
         self.windows['output'].create('vertical belowright new')
-        self.windows['scope'].create('belowright new')
-        self.windows['log'].create('belowright new')
-        self.windows['stack'].create('belowright new')
-        self.windows['watch'].create('belowright new')
+        self.windows['scope'].create('aboveleft new')
+        self.windows['log'].create('aboveleft new')
+        self.windows['stack'].create('aboveleft new')
+        self.windows['watch'].create('aboveleft new')
         width = self.windows['output'].width + self.windows['scope'].width
         self.windows['output'].command('vertical res %d' % (width/2))
         self.windows['watch'].results.command('vertical res %d' % (width/4))
