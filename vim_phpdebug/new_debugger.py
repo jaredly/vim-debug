@@ -173,7 +173,7 @@ class Debugger:
         self.bend.command('eval', data=code)
         self.bend.command('context_get')
 
-    @cmd('quit', 'stop', help='exit the debugger')
+    @cmd('quit', 'stop', 'exit', help='exit the debugger')
     def quit(self):
         self.bend.close()
         self.ui.close()
