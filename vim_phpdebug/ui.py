@@ -1,7 +1,7 @@
 import os
 import vim
 
-from subwindows import StackWindow, WatchWindow, TraceWindow, HelpWindow
+from subwindows import WatchWindow, StackWindow, ScopeWindow, OutputWindow, LogWindow
 
 class DebugUI:
     """ DEBUGUI class """
@@ -10,9 +10,10 @@ class DebugUI:
         self.windows = {
             'watch':WatchWindow(),
             'stack':StackWindow(),
-            'trace':TraceWindow(),
-            'help':HelpWindow('HELP__WINDOW'),
-            #'status':StatusWindow()
+            'scope':ScopeWindow(),
+            'output':OutputWindow(),
+            'log':LogWindow(),
+            # 'status':StatusWindow()
         }
         self.mode     = 0 # normal mode
         self.file     = None
@@ -22,7 +23,7 @@ class DebugUI:
         self.sessfile = "/tmp/debugger_vim_saved_session." + str(os.getpid())
         self.minibufexpl = minibufexpl
 
-    def debug_mode(self):
+    def startup(self):
         """ change mode to debug """
         if self.mode == 1: # is debug mode ?
             return
@@ -46,7 +47,7 @@ class DebugUI:
 
         self.set_highlight()
 
-    def normal_mode(self):
+    def closedown(self):
         """ restore mode to normal """
         if self.mode == 0: # is normal mode ?
             return
@@ -75,10 +76,14 @@ class DebugUI:
 
     def create(self):
         """ create windows """
-        self.windows['watch'].create('vertical belowright new')
-        self.windows['help'].create('belowright new')
+        self.windows['output'].create('vertical belowright new')
+        self.windows['scope'].create('belowright new')
+        self.windows['log'].create('belowright new')
         self.windows['stack'].create('belowright new')
-        self.windows['trace'].create('belowright new')
+        self.windows['watch'].create('belowright new')
+        width = self.windows['output'].width + self.windows['scope'].width
+        self.windows['output'].command('vertical res %d' % (width/2))
+        self.windows['watch'].results.command('vertical res %d' % (width/4))
 
     def set_highlight(self):
         """ set vim highlight of debugger sign """
@@ -112,7 +117,8 @@ class DebugUI:
             self.go_srcview()
             vim.command('silent edit ' + file)
 
-        vim.command('sign place ' + nextsign + ' name=current line='+str(line)+' file='+file)
+        cmd = 'sign place %s name=current line=%s file=%s' % (nextsign, line, file)
+        vim.command(str(cmd))
         vim.command('sign unplace ' + self.cursign)
 
         vim.command('sign jump ' + nextsign + ' file='+file)

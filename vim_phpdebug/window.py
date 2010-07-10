@@ -2,9 +2,11 @@ import vim
 
 class VimWindow:
     """ wrapper class of window of vim """
-    def __init__(self, name = 'DEBUG_WINDOW', special=True, height=0):
+    name = 'DEBUG_WINDOW'
+    def __init__(self, name = None, special=True, height=0):
         """ initialize """
-        self.name = name
+        if name is not None:
+            self.name = name
         self.buffer = None
         self.height = height
         self.firstwrite = 1
@@ -51,17 +53,17 @@ class VimWindow:
 
     def write(self, msg):
         """ append last """
+        self.writelines(msg.splitlines())
+
+    def writelines(self, lines):
+        # print 'writing', lines
+        lines = list(str(item) for item in lines)
         self.prepare()
-        # cn = vim.current.buffer.number
-        # vim.command('b! %d' % self.buffer.number)
-        # vim.command("setlocal modifiable")
         if self.firstwrite == 1:
             self.firstwrite = 0
-            self.buffer[:] = str(msg).split('\n')
+            self.buffer[:] = lines
         else:
-            self.buffer.append(str(msg).split('\n'))
-        # vim.command("setlocal nomodifiable")
-        # vim.command('b! %d' % cn)
+            self.buffer.append(lines)
         self.command('normal G')
         #self.window.cursor = (len(self.buffer), 1)
 
@@ -89,7 +91,7 @@ class VimWindow:
         self.command('bd %d' % self.buffer.number)
         self.firstwrite = 1
 
-    def clean(self):
+    def clear(self):
         """ clean all datas in buffer """
         self.prepare()
         self.buffer[:] = []

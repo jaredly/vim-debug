@@ -1,54 +1,83 @@
 from window import VimWindow
 import errors
+import base64
 
 class StackWindow(VimWindow):
     '''Keeps track of the current execution stack'''
-    def __init__(self, name = 'STACK_WINDOW'):
+    name = 'STACK_WINDOW'
+    def __init__(self, name = None):
         VimWindow.__init__(self, name)
-    def xml_on_element(self, node):
-        if node.nodeName != 'stack':
-            return VimWindow.xml_on_element(self, node)
-        else:
-            if node.getAttribute('where') != '{main}':
-                fmark = '()'
-            else:
-                fmark = ''
-            return str('%-2s %-15s %s:%s' % (            \
-                    node.getAttribute('level'),                \
-                    node.getAttribute('where')+fmark,    \
-                    node.getAttribute('filename')[7:], \
-                    node.getAttribute('lineno')))
+        self.at = 0
+
+    def refresh(self, node):
+        self.at = 0
+        stack = node.getElementsByTagName('stack')
+        self.stack = list(map(item.getAttribute, ('level', 'where', 'filename', 'lineno')) for item in stack)
+        self.clear()
+        tpl = '%-2s %-15s %s:%s' 
+        lines = list(tpl % tuple(item) for item in self.stack)
+        self.writelines(lines)
+        self.highlight(0)
+        return self.stack[0]
+
     def on_create(self):
         self.command('highlight CurStack term=reverse ctermfg=White ctermbg=Red gui=reverse')
-        self.highlight_stack(0)
-    def highlight_stack(self, no):
+        self.highlight(0)
+
+    def highlight(self, num):
         self.command('syntax clear')
-        self.command('syntax region CurStack start="^' +str(no)+ ' " end="$"')
+        self.command('syntax region CurStack start="^%d " end="$"' % num)
 
 class LogWindow(VimWindow):
     '''I don't actually know what this does...'''
-    def __init__(self, name = 'LOG___WINDOW'):
-        VimWindow.__init__(self, name)
+    name = 'LOG_WINDOW'
+
     def on_create(self):
         self.command('set nowrap fdm=marker fmr={{{,}}} fdl=0')
-        self.write('asdfasdf')
+        self.write('logging...?')
 
-class TraceWindow(VimWindow):
-    '''Logs all communication with the debug server'''
-    def __init__(self, name = 'TRACE_WINDOW'):
-        VimWindow.__init__(self, name)
-    def xml_on_element(self, node):
-        if node.nodeName != 'error':
-            return VimWindow.xml_on_element(self, node)
-        else:
-            desc = ''
-            if node.hasAttribute('code'):
-                desc = ' : '+errors.error_msg[int(node.getAttribute('code'))]
-            return VimWindow.xml_on_element(self, node) + desc
+class OutputWindow(VimWindow):
+    '''Logs the stdout + stderr'''
+    name = 'OUTPUT_WINDOW'
+
     def on_create(self):
-        self.command('set nowrap fdm=marker fmr={{{,}}} fdl=0')
+        self.command('set wrap fdm=marker fmr={{{,}}} fdl=0')
+        self.command('setlocal wfw')
 
-class WatchWindow(VimWindow):
+    def add(self, type, text):
+        # TODO: highlight stderr
+        self.write(text)
+
+class WatchWindow:
+    ''' window for watch expressions '''
+
+    def __init__(self):
+        self.expressions = VimWindow('WATCH')
+        self.results = VimWindow('RESULTS')
+
+    def create(self, where=None):
+        self.expressions.create('leftabove new')
+        self.results.create('vertical belowright new')
+
+class ScopeWindow(VimWindow):
+    ''' lists the current scope (context) '''
+
+    name = 'SCOPE_WINDOW'
+
+    def refresh(self, node):
+        self.clear()
+        for child in node.getElementsByTagName('property'):
+            name = child.getAttribute('fullname')
+            if not child.firstChild:
+                text = ''
+            else:
+                text = child.firstChild.data
+            type = child.getAttribute('type')
+            if child.hasAttribute('encoding') and child.getAttribute('encoding') == 'base64':
+                text = base64.decodestring(text)
+            self.write('%-10s = %s /* type: %s */' % (name, text, type))
+
+class WatchWindow_(VimWindow):
     '''apparently watches stuff...shows eval results, context values...'''
     def __init__(self, name = 'WATCH_WINDOW'):
         VimWindow.__init__(self, name)
@@ -135,24 +164,17 @@ class WatchWindow(VimWindow):
         else:
             return ('none', '')
 
-class HelpWindow(VimWindow):
-    '''Displays the help page'''
-    def __init__(self, name = 'HELP__WINDOW'):
-        VimWindow.__init__(self, name)
-    def on_create(self):
-        ## wouldn't this be better as a file?
-        self.write(                                                                                                                    \
-        '[ Function Keys ]                 |                       \n'
-        '  <F1>   resize                   | [ Normal Mode ]       \n'
-        '  <F2>   step into                |   ,e  eval            \n'
-        '  <F3>   step over                |                       \n'
-        '  <F4>   step out                 |                       \n'
-        '  <F5>   run                      | [ Command Mode ]      \n'
-        '  <F6>   quit debugging           | :Bp toggle breakpoint \n'
-        '                                  | :Up stack up          \n'
-        '  <F11>  get all context          | :Dn stack down        \n'
-        '  <F12>  get property at cursor   |                       \n'
-        '\n')
-        self.command('1')
+help_text = '''\
+[ Function Keys ]                 |                      
+  <F1>   resize                   | [ Normal Mode ]      
+  <F2>   step into                |   ,e  eval           
+  <F3>   step over                |                      
+  <F4>   step out                 |                      
+  <F5>   run                      | [ Command Mode ]     
+  <F6>   quit debugging           | :Bp toggle breakpoint
+                                  | :Up stack up         
+  <F11>  get all context          | :Dn stack down       
+  <F12>  get property at cursor   |                      
+'''
 
 # vim: et sw=4 sts=4
