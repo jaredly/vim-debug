@@ -90,6 +90,22 @@ class DebugUI:
         vim.command("highlight DbgCurrent term=reverse ctermfg=White ctermbg=Red gui=reverse")
         vim.command("highlight DbgBreakPt term=reverse ctermfg=White ctermbg=Green gui=reverse")
 
+    def stack_up(self):
+        stack = self.windows['stack']
+        if stack.at > 0:
+            stack.at -= 1
+            stack.highlight(stack.at)
+            item = stack.stack[stack.at]
+            self.set_srcview(item[2][7:], item[3])
+
+    def stack_down(self):
+        stack = self.windows['stack']
+        if stack.at < len(stack.stack)-1:
+            stack.at += 1
+            stack.highlight(stack.at)
+            item = stack.stack[stack.at]
+            self.set_srcview(item[2][7:], item[3])
+
     def destroy(self):
         """ destroy windows """
         for window in self.windows.values():

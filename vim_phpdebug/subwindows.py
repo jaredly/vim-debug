@@ -74,8 +74,10 @@ class ScopeWindow(VimWindow):
             name = child.getAttribute('fullname')
             if not child.firstChild:
                 text = ''
-            else:
+            elif hasattr(child.firstChild, 'data'):
                 text = child.firstChild.data
+            else:
+                text = ''
             type = child.getAttribute('type')
             if child.hasAttribute('encoding') and child.getAttribute('encoding') == 'base64':
                 text = base64.decodestring(text)

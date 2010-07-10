@@ -34,13 +34,6 @@ class Registrar:
         def meta(func):
             self.add(func, args, kwds)
 
-        '''
-        if not self.named and args: # function was passed in
-            if len(args) != 1:
-                raise TypeError('this registrar takes no positional arguments (just the function)')
-            func, args = args[0], args[1:]
-            return meta(func)
-        '''
         return meta
 
     def add(self, func, args, kwds):
@@ -185,6 +178,14 @@ class Debugger:
         self.bend.close()
         self.ui.close()
         vim_quit()
+
+    @cmd('u', 'up', help='go up the stack', lead='u')
+    def up(self):
+        self.ui.stack_up()
+
+    @cmd('d', 'down', help='go down the stack', lead='d')
+    def down(self):
+        self.ui.stack_down()
     
     def commands(self):
         return self.cmd.bind(self)
