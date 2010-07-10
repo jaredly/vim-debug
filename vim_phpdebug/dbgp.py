@@ -12,6 +12,7 @@ class DBGP:
         self.handlers = {}
         self.addCommandHandler = self.handlers.__setitem__
         self.connect = self.sock.accept
+        self.close = self.sock.close
         self.log = log
 
     def connected(self):

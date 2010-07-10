@@ -59,6 +59,10 @@ class WatchWindow:
         self.expressions.create('leftabove new')
         self.results.create('vertical belowright new')
 
+    def destroy(self):
+        self.expressions.destroy()
+        self.results.destroy()
+
 class ScopeWindow(VimWindow):
     ''' lists the current scope (context) '''
 

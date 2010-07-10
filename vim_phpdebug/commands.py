@@ -6,8 +6,11 @@ from new_debugger import Debugger
 
 import shlex
 
-_commands = {}
+_old_commands = _commands = {}
 def debugger_cmd(plain):
+    global _commands, debugger
+    if not _commands:
+        return start(*shlex.split(plain))
     if ' ' in plain:
         name, plain = plain.split(' ', 1)
         args = shlex.split(plain)
@@ -22,11 +25,14 @@ def debugger_cmd(plain):
         return
     cmd = _commands[name]
     if not callable(cmd['function']):
-        return debugger.bend.command(cmd['function'])
-    if cmd['options']['plain']:
-        return cmd['function'](plain)
+        debugger.bend.command(cmd['function'])
+    elif cmd['options'].get('plain', False):
+        cmd['function'](plain)
     else:
         cmd['function'](*args)
+    if name == 'quit':
+        _commands = None
+        debugger = None
 
 def cmd(name, help='', plain=False):
     def decor(fn):
@@ -36,9 +42,7 @@ def cmd(name, help='', plain=False):
 
 debugger = None
 
-@cmd('start', 'start a debugging session')
 def start(url = None):
-    print 'starting'
     global debugger
     if debugger and debugger.started:
         return

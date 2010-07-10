@@ -47,7 +47,7 @@ class DebugUI:
 
         self.set_highlight()
 
-    def closedown(self):
+    def close(self):
         """ restore mode to normal """
         if self.mode == 0: # is normal mode ?
             return

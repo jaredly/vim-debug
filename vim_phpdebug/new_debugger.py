@@ -182,8 +182,8 @@ class Debugger:
 
     @cmd('quit', 'stop', help='exit the debugger')
     def quit(self):
-        self.bend.quit()
-        self.ui.quit()
+        self.bend.close()
+        self.ui.close()
         vim_quit()
     
     def commands(self):
