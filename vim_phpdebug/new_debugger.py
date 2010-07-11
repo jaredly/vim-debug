@@ -3,6 +3,7 @@ import textwrap
 import socket
 import gconf
 import vim
+import os
 
 from ui import DebugUI
 from dbgp import DBGP
@@ -187,6 +188,21 @@ class Debugger:
     @cmd('d', 'down', help='go down the stack', lead='d')
     def down(self):
         self.ui.stack_down()
+
+    @cmd('b', 'break', help='set a breakpoint', lead='b')
+    def break_(self):
+        (row, col) = vim.current.window.cursor
+        file = os.path.abspath(vim.current.buffer.name)
+        if not os.path.exists(file):
+            print 'Not in a file'
+            return
+        bid = self.ui.break_at(file, row)
+        if bid == -1:
+            tid = self.bend.cid + 1
+            self.ui.queue_break(tid, file, row)
+            self.bend.command('breakpoint_set', 't', 'line', 'f', 'file://' + file, 'n', row, data='')
+        else:
+            self.bend.command('breakpoint_remove', 'd', bid)
     
     def commands(self):
         self._commands = self.cmd.bind(self)
@@ -197,6 +213,16 @@ class Debugger:
     def _stack_get(self, node):
         line = self.ui.windows['stack'].refresh(node)
         self.ui.set_srcview(line[2][7:], line[3])
+
+    @handle('breakpoint_set')
+    def _breakpoint_set(self, node):
+        self.ui.set_break(int(node.getAttribute('transaction_id')), node.getAttribute('id'))
+        self.ui.go_srcview()
+
+    @handle('breakpoint_remove')
+    def _breakpoint_remove(self, node):
+        self.ui.clear_break(node.firstChild.getAttribute('id'))
+        self.ui.go_srcview()
 
     def _status(self, node):
         if node.getAttribute('reason') == 'ok':
@@ -230,11 +256,6 @@ class Debugger:
     handle('step_out')(_change)
     handle('step_over')(_change)
     handle('run')(_status)
-
-    @handle('breakpoint_set')
-    def _breakpoint_set(self, node):
-        tid = node.getAttribute('id')
-        self.ui.breaks.set_pending(tid)
 
     def _log(self, node):
         self.ui.windows['log'].write(node.toprettyxml(indent='   '))

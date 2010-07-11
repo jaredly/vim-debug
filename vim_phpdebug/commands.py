@@ -25,16 +25,17 @@ def debugger_cmd(plain):
             print ' - ', command, '      ::', _commands[command]['options'].get('help', '')
         return
     cmd = _commands[name]
-    if not callable(cmd['function']):
-        if debugger.bend.connected():
-            try:
-                debugger.bend.command(cmd['function'])
-            except (EOFError, socket.error):
-                debugger.disable()
-    elif cmd['options'].get('plain', False):
-        cmd['function'](plain)
-    else:
-        cmd['function'](*args)
+    try:
+        if not callable(cmd['function']):
+            if debugger.bend.connected():
+                    debugger.bend.command(cmd['function'])
+        elif cmd['options'].get('plain', False):
+            cmd['function'](plain)
+        else:
+            cmd['function'](*args)
+    except (EOFError, socket.error):
+        if debugger is not None:
+            debugger.disable()
     if name == 'quit':
         _commands = None
         debugger = None

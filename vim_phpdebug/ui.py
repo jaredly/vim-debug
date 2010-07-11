@@ -19,6 +19,8 @@ class DebugUI:
         self.file     = None
         self.line     = None
         self.winbuf   = {}
+        self.breaks   = {}
+        self.waiting  = {}
         self.cursign  = None
         self.sessfile = "/tmp/debugger_vim_saved_session." + str(os.getpid())
         self.minibufexpl = minibufexpl
@@ -63,7 +65,6 @@ class DebugUI:
         os.system('rm -f ' + self.sessfile)
 
         self.set_highlight()
-
 
         self.winbuf.clear()
         self.file = None
@@ -113,6 +114,31 @@ class DebugUI:
             stack.highlight(stack.at)
             item = stack.stack[stack.at]
             self.set_srcview(item[2][7:], item[3])
+
+    def queue_break(self, tid, file, line):
+        self.waiting[tid] = file, line
+
+    def set_break(self, tid, bid):
+        if tid in self.waiting:
+            file, line = self.waiting[tid]
+            self.breaks[bid] = file, line, tid
+            vim.command('sign place %d name=breakpt line=%d file=%s' % (tid, line, file))
+        else:
+            print 'failed to set breakpoint... %d : %s' % (tid, self.waiting)
+
+    def clear_break(self, bid):
+        if bid in self.breaks:
+            file, line, tid = self.breaks[bid]
+            vim.command('sign unplace %d file=%s' % (tid, file))
+        else:
+            print 'failed to remove', bid
+
+    def break_at(self, file, line):
+        # self.windows['log'].write('looking for %s line %s in %s' % (file, line, self.breaks))
+        for bid, value in self.breaks.iteritems():
+            if value[:2] == (file, line):
+                return bid
+        return -1
 
     def destroy(self):
         """ destroy windows """
