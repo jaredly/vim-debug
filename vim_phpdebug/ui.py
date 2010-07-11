@@ -124,7 +124,7 @@ class DebugUI:
             self.breaks[bid] = file, line, tid
             vim.command('sign place %d name=breakpt line=%d file=%s' % (tid, line, file))
         else:
-            print 'failed to set breakpoint... %d : %s' % (tid, self.waiting)
+            pass # print 'failed to set breakpoint... %d : %s' % (tid, self.waiting)
 
     def clear_break(self, bid):
         if bid in self.breaks:

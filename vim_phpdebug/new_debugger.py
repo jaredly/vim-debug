@@ -169,6 +169,7 @@ class Debugger:
     cmd('o', 'over', help='step over next function call', lead='o')('step_over')
     cmd('i', 'into', help='step into next function call', lead='i')('step_into')
     cmd('out', help='step out of current function call', lead='t')('step_out')
+    cmd('r', 'run', help='continue execution until a breakpoint is reached or the program ends', lead='r')('run')
     
     @cmd('e', 'eval', help='eval some code', plain=True)
     def eval_(self, code):
@@ -203,6 +204,18 @@ class Debugger:
             self.bend.command('breakpoint_set', 't', 'line', 'f', 'file://' + file, 'n', row, data='')
         else:
             self.bend.command('breakpoint_remove', 'd', bid)
+
+    @cmd('h', 'here', help='continue execution until the cursor (tmp breakpoint)', lead='h')
+    def here(self):
+        (row, col) = vim.current.window.cursor
+        file = os.path.abspath(vim.current.buffer.name)
+        if not os.path.exists(file):
+            print 'Not in a file'
+            return
+        tid = self.bend.cid + 1
+        # self.ui.queue_break(tid, file, row)
+        self.bend.command('breakpoint_set', 't', 'line', 'r', '1', 'f', 'file://' + file, 'n', row, data='')
+        self.bend.command('run')
     
     def commands(self):
         self._commands = self.cmd.bind(self)
@@ -255,7 +268,7 @@ class Debugger:
     handle('step_into')(_change)
     handle('step_out')(_change)
     handle('step_over')(_change)
-    handle('run')(_status)
+    handle('run')(_change)
 
     def _log(self, node):
         self.ui.windows['log'].write(node.toprettyxml(indent='   '))
