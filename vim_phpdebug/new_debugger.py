@@ -1,5 +1,6 @@
 import subprocess
 import textwrap
+import socket
 import gconf
 import vim
 
@@ -188,7 +189,8 @@ class Debugger:
         self.ui.stack_down()
     
     def commands(self):
-        return self.cmd.bind(self)
+        self._commands = self.cmd.bind(self)
+        return self._commands
 
     handle = Registrar()
     @handle('stack_get')
@@ -203,8 +205,18 @@ class Debugger:
     def _change(self, node):
         if node.getAttribute('reason') == 'ok':
             self.set_status(node.getAttribute('status'))
-            self.bend.command('context_get')
-            self.bend.command('stack_get')
+            try:
+                self.bend.command('context_get')
+                self.bend.command('stack_get')
+            except (EOFError, socket.error):
+                self.disable()
+
+    def disable(self):
+        print 'Execution has ended; connection closed. type :Dbg quit to exit debugger'
+        self.ui.unhighlight()
+        for cmd in self._commands.keys():
+            if cmd not in ('quit', 'close'):
+                self._commands.pop(cmd)
 
     @handle('<init>')
     def _init(self, node):

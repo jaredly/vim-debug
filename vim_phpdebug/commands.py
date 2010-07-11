@@ -1,6 +1,7 @@
 import os
 import sys
 import vim
+import socket
 import traceback
 from new_debugger import Debugger
 
@@ -25,7 +26,11 @@ def debugger_cmd(plain):
         return
     cmd = _commands[name]
     if not callable(cmd['function']):
-        debugger.bend.command(cmd['function'])
+        if debugger.bend.connected():
+            try:
+                debugger.bend.command(cmd['function'])
+            except (EOFError, socket.error):
+                debugger.disable()
     elif cmd['options'].get('plain', False):
         cmd['function'](plain)
     else:

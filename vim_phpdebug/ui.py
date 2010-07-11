@@ -90,6 +90,14 @@ class DebugUI:
         vim.command("highlight DbgCurrent term=reverse ctermfg=White ctermbg=Red gui=reverse")
         vim.command("highlight DbgBreakPt term=reverse ctermfg=White ctermbg=Green gui=reverse")
 
+    def unhighlight(self):
+        self.windows['stack'].clear()
+        self.windows['stack'].write('\n\n!!!!!---- Debugging has ended. Type `:dbg quit` to exit ----!!!!!\n\n')
+        self.windows['stack'].command('syntax clear')
+        self.windows['stack'].command('syntax region CurStack start="^!!!!!---- " end="$"')
+        self.go_srcview()
+        vim.command('sign unplace ' + self.cursign)
+
     def stack_up(self):
         stack = self.windows['stack']
         if stack.at > 0:

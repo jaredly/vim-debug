@@ -4,7 +4,7 @@ import base64
 
 class StackWindow(VimWindow):
     '''Keeps track of the current execution stack'''
-    name = 'STACK_WINDOW'
+    name = 'STACK'
     dtext = '[[Execution Stack - most recent call first]]'
     def __init__(self, name = None):
         VimWindow.__init__(self, name)
@@ -31,7 +31,7 @@ class StackWindow(VimWindow):
 
 class LogWindow(VimWindow):
     '''I don't actually know what this does...'''
-    name = 'LOG_WINDOW'
+    name = 'LOG'
     dtext = '[[Logs all traffic]]'
 
     def on_create(self):
@@ -39,8 +39,8 @@ class LogWindow(VimWindow):
 
 class OutputWindow(VimWindow):
     '''Logs the stdout + stderr'''
-    name = 'OUTPUT_WINDOW'
-    dtext = '[[Stdout and Stderr are copied here fir your convenience]]'
+    name = 'STDOUT_STDERR'
+    dtext = '[[Stdout and Stderr are copied here for your convenience]]'
 
     def on_create(self):
         self.command('set wrap fdm=marker fmr={{{,}}} fdl=0')
@@ -55,9 +55,9 @@ class WatchWindow:
 
     def __init__(self):
         self.expressions = VimWindow('WATCH')
-        self.expressions.dtext = '[[Type expressions here and hit \w for them to be evaluated]]'
+        self.expressions.dtext = '[[Type expressions here]]'
         self.results = VimWindow('RESULTS')
-        self.results.dtext = '[[Results show up here]]'
+        self.results.dtext = '[[type \w for them to be evaluated]]'
 
     def create(self, where=None):
         self.expressions.create('leftabove new')
@@ -70,7 +70,7 @@ class WatchWindow:
 class ScopeWindow(VimWindow):
     ''' lists the current scope (context) '''
 
-    name = 'SCOPE_WINDOW'
+    name = 'SCOPE'
     dtext = '[[Current scope variables...]]'
 
     def refresh(self, node):
@@ -86,7 +86,7 @@ class ScopeWindow(VimWindow):
             type = child.getAttribute('type')
             if child.hasAttribute('encoding') and child.getAttribute('encoding') == 'base64':
                 text = base64.decodestring(text)
-            self.write('%-10s = %s /* type: %s */' % (name, text, type))
+            self.write('%-20s = %-10s /* type: %s */' % (name, text, type))
 
 help_text = '''\
 [ Function Keys ]                 |                      

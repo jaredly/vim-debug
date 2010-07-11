@@ -37,6 +37,8 @@ class DBGP:
     def get_packets(self, force=0):
         while self.received < self.cid or force > 0:
             force -= 1
+            if not self.sock.sock:
+                return
             packet = self.sock.read_packet()
             # print 'packet:', self.received, self.cid
             # print packet.toprettyxml(indent='   ')
@@ -91,8 +93,9 @@ class PacketSocket:
         return True
     
     def close(self):
-        self.sock.close()
-        self.sock = None
+        if self.sock:
+            self.sock.close()
+            self.sock = None
         self.connected = False
 
     def read(self, size):
@@ -110,6 +113,8 @@ class PacketSocket:
     def read_number(self):
         length = ''
         while 1:
+            if not self.sock:
+                raise EOFError, 'Socket Closed'
             c = self.sock.recv(1)
             if c == '':
                 self.close()
