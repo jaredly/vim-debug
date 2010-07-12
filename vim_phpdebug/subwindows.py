@@ -45,9 +45,16 @@ class OutputWindow(VimWindow):
     def on_create(self):
         self.command('set wrap fdm=marker fmr={{{,}}} fdl=0')
         self.command('setlocal wfw')
+        self.last = 'stdout'
 
     def add(self, type, text):
         # TODO: highlight stderr
+        if type != self.last:
+            self.last = type
+            if type == 'stderr':
+                self.write('[[STDERR]]')
+            else:
+                self.write('[[STDOUT]]')
         self.write(text)
 
 class WatchWindow:
