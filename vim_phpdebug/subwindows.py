@@ -82,9 +82,10 @@ class WatchWindow:
         l = len(self.results.buffer)
         for a in range(len(self.results.buffer)-1, line):
             self.results.buffer.append('')
-        res = str(get_child_text(node, 'property'))
+        prop = node.getElementsByTagName('property')[0]
+        res = str(get_text(prop))
         if not res:
-            res = str(get_text(node))
+            res = str(get_child_text(prop, 'value'))
         self.results.buffer[line] = res
 
 def get_text(node):
