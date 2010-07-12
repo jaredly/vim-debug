@@ -40,7 +40,7 @@ class LogWindow(VimWindow):
 class OutputWindow(VimWindow):
     '''Logs the stdout + stderr'''
     name = 'STDOUT_STDERR'
-    dtext = '[[Stdout and Stderr are copied here for your convenience]]'
+    dtext = '[[Stdout and Stderr are copied here for your convenience]]\n'
 
     def on_create(self):
         self.command('set wrap fdm=marker fmr={{{,}}} fdl=0')
@@ -55,7 +55,11 @@ class OutputWindow(VimWindow):
                 self.write('[[STDERR]]')
             else:
                 self.write('[[STDOUT]]')
-        self.write(text)
+        lines = text.split('\n')
+        self.buffer[-1] += lines[0]
+        for line in lines[1:]:
+            self.buffer.append(line)
+        self.command('normal G')
 
 class WatchWindow:
     ''' window for watch expressions '''
@@ -74,14 +78,25 @@ class WatchWindow:
         self.expressions.destroy()
         self.results.destroy()
 
+    def set_result(self, line, node):
+        l = len(self.results.buffer)
+        for a in range(len(self.results.buffer)-1, line):
+            self.results.buffer.append('')
+        self.results.buffer[line] = str(get_text(node))
+
 def get_text(node):
+    if not hasattr(node.firstChild, 'data'):
+        return ''
     data = node.firstChild.data
     if node.getAttribute('encoding') == 'base64':
         return base64.decodestring(data)
     return data
 
 def get_child_text(node, child_tag):
-    return get_text(node.getElementsByTagName(child_tag)[0])
+    tags = node.getElementsByTagName(child_tag)
+    if not tags:
+        return ''
+    return get_text(tags[0])
 
 class ScopeWindow(VimWindow):
     ''' lists the current scope (context) '''
@@ -95,7 +110,7 @@ class ScopeWindow(VimWindow):
             name = child.getAttribute('fullname')
             type = child.getAttribute('type')
             children = child.getAttribute('children')
-            if not name and children == '0':
+            if not name:
                 text = get_child_text(child, 'value')
                 name = get_child_text(child, 'fullname')
             else:

@@ -5,7 +5,7 @@ import xml.dom.minidom
 
 class DBGP:
     """ DBGp Procotol class """
-    def __init__(self, options, log=lambda text:None):
+    def __init__(self, options, log=lambda text:None, type=None):
         self.sock = PacketSocket(options)
         self.cid = 0
         self.received = 0
@@ -14,6 +14,7 @@ class DBGP:
         self.connect = self.sock.accept
         self.close = self.sock.close
         self.log = log
+        self._type = type
 
     def connected(self):
         return self.sock.connected
@@ -25,6 +26,8 @@ class DBGP:
         str_args = ''.join(' -%s %s' % arg for arg in zip(args[::2], args[1::2])) # args.iteritems())
         if data:
             b64data = ' -- ' + base64.encodestring(data)[:-1]
+            if self._type == 'python':
+                str_args += ' -l %d' % (len(b64data)-4)
         else:
             b64data = ''
         cmd = tpl % (cmd, self.cid, str_args, b64data)

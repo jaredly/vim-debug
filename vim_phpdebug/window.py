@@ -51,6 +51,7 @@ class VimWindow:
         # vim.command("setlocal nomodifiable")
         self.buffer = vim.current.buffer
         self.buffer[:] = [self.dtext]
+        self.buffer.append('')
         if self.height != 0:
             vim.command('res %d' % self.height)
         self.width = int( vim.eval("winwidth(0)") )

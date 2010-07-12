@@ -70,7 +70,8 @@ class Debugger:
     options = {'port':9000, 'max_children':32, 'max_data':'1024', 'minbufexpl':0, 'max_depth':1}
     def __init__(self):
         self.started = False
-        pass
+        self.watching = {}
+        self._type = None
     
     def init_vim(self):
         self.ui = DebugUI()
@@ -85,6 +86,7 @@ class Debugger:
         else:
             url += '?'
         url += 'XDEBUG_SESSION_START=vim_phpdebug'
+        self._type = 'php'
         try:
             import gconf
             browser = gconf.Client().get_string('/desktop/gnome/applications/browser/exec')
@@ -113,12 +115,13 @@ class Debugger:
 
     def start_py(self, fname):
         subprocess.Popen(('pydbgp', '-d', 'localhost:9000', fname), stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+        self._type = 'python'
         return self.start()
 
     def start(self):
         ## self.breaks = BreakPointManager()
         self.started = True
-        self.bend = DBGP(self.settings, self.ui.windows['log'].write)
+        self.bend = DBGP(self.settings, self.ui.windows['log'].write, self._type)
         for key, value in self.handle.bind(self).iteritems():
             if callable(value['function']):
                 fn = value['function']
@@ -192,6 +195,17 @@ class Debugger:
     @cmd('d', 'down', help='go down the stack', lead='d')
     def down(self):
         self.ui.stack_down()
+
+    @cmd('w', 'watch', help='execute watch functions', lead='w')
+    def watch(self):
+        lines = self.ui.windows['watch'].expressions.buffer
+        self.watching = {}
+        for i, line in enumerate(lines[1:]):
+            if not line.strip():continue
+            # self.ui.windows['log'].write('evalling:' + line)
+            tid = self.bend.command('eval', data=line, suppress=True)
+            self.watching[tid] = i+1
+        self.bend.get_packets()
 
     @cmd('b', 'break', help='set a breakpoint', lead='b')
     def break_(self):
@@ -280,7 +294,12 @@ class Debugger:
         self.ui.windows['log'].write(node.toprettyxml(indent='   '))
         pass # print node
 
-    handle('eval')(_log)
+    @handle('eval')
+    def _eval(self, node):
+        id = int(node.getAttribute('transaction_id'))
+        if id in self.watching:
+            self.ui.windows['watch'].set_result(self.watching.pop(id), node)
+
     handle('property_get')(_log)
     handle('property_set')(_log)
 
