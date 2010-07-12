@@ -73,8 +73,8 @@ class PacketSocket:
         self.connected = False
 
     def accept(self):
-        print 'waiting for a new connection on port %d for %d seconds...' % (self.options.get('port', 9000),
-                                                                             self.options.get('wait', 5))
+        # print 'waiting for a new connection on port %d for %d seconds...' % (self.options.get('port', 9000),
+        #                                                                      self.options.get('wait', 5))
         self.connected = False
         serv = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         socket.setdefaulttimeout(self.options.get('wait', 10))
@@ -87,7 +87,7 @@ class PacketSocket:
             serv.close()
             return False
 
-        print 'connection from ', address
+        # print 'connection from ', address
         self.connected = True
         serv.close()
         return True

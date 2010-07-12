@@ -170,7 +170,7 @@ class DebugUI:
         if file != self.file:
             self.file = file
             self.go_srcview()
-            vim.command('silent edit ' + file)
+            vim.command('silent edit! ' + file)
 
         cmd = 'sign place %s name=current line=%s file=%s' % (nextsign, line, file)
         vim.command(str(cmd))

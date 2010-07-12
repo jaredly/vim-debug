@@ -80,7 +80,6 @@ class Debugger:
         vim_init()
 
     def start_url(self, url):
-        print 'starting'
         if '?' in url:
             url += '&'
         else:
@@ -113,7 +112,6 @@ class Debugger:
         return self.start()
 
     def start_py(self, fname):
-        print 'starting'
         subprocess.Popen(('pydbgp', '-d', 'localhost:9000', fname), stdout=subprocess.PIPE, stderr=subprocess.PIPE)
         return self.start()
 
