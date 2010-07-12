@@ -105,7 +105,7 @@ class DebugUI:
             stack.at -= 1
             stack.highlight(stack.at)
             item = stack.stack[stack.at]
-            self.set_srcview(item[2][7:], item[3])
+            self.set_srcview(item[2], item[3])
 
     def stack_down(self):
         stack = self.windows['stack']
@@ -113,7 +113,7 @@ class DebugUI:
             stack.at += 1
             stack.highlight(stack.at)
             item = stack.stack[stack.at]
-            self.set_srcview(item[2][7:], item[3])
+            self.set_srcview(item[2], item[3])
 
     def queue_break(self, tid, file, line):
         self.waiting[tid] = file, line
@@ -156,6 +156,11 @@ class DebugUI:
 
     def set_srcview(self, file, line):
         """ set srcview windows to file:line and replace current sign """
+
+        if file.startswith('file:'):
+            file = file[len('file:'):]
+            if file.startswith('///'):
+                file = file[2:]
 
         if file == self.file and self.line == line:
             return

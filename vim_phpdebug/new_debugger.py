@@ -91,7 +91,7 @@ class Debugger:
             browser = gconf.Client().get_string('/desktop/gnome/applications/browser/exec')
             if browser is None:
                 raise ValueError
-            subprocess.Popen((browser, url))
+            subprocess.Popen((browser, url), stdout=subprocess.PIPE, stderr=subprocess.PIPE)
         except ImportError: # don't have gconf
             print 'gconf not found...',
         except ValueError:
@@ -103,13 +103,18 @@ class Debugger:
         # TODO: allow custom browsers
         print 'trying chrome, firefox'
         try:
-            subprocess.Popen(('google-chrome', url))
+            subprocess.Popen(('google-chrome', url), stdout=subprocess.PIPE, stderr=subprocess.PIPE)
         except OSError:
             try:
-                subprocess.Popen(('firefox', url))
+                subprocess.Popen(('firefox', url), stdout=subprocess.PIPE, stderr=subprocess.PIPE)
             except OSError:
                 print 'neither chrome nor firefox were found. failed to start debug session.'
                 return
+        return self.start()
+
+    def start_py(self, fname):
+        print 'starting'
+        subprocess.Popen(('pydbgp', '-d', 'localhost:9000', fname), stdout=subprocess.PIPE, stderr=subprocess.PIPE)
         return self.start()
 
     def start(self):
@@ -225,7 +230,7 @@ class Debugger:
     @handle('stack_get')
     def _stack_get(self, node):
         line = self.ui.windows['stack'].refresh(node)
-        self.ui.set_srcview(line[2][7:], line[3])
+        self.ui.set_srcview(line[2], line[3])
 
     @handle('breakpoint_set')
     def _breakpoint_set(self, node):
@@ -244,10 +249,13 @@ class Debugger:
     def _change(self, node):
         if node.getAttribute('reason') == 'ok':
             self.set_status(node.getAttribute('status'))
-            try:
-                self.bend.command('context_get')
-                self.bend.command('stack_get')
-            except (EOFError, socket.error):
+            if self.status != 'stopping':
+                try:
+                    self.bend.command('context_get')
+                    self.bend.command('stack_get')
+                except (EOFError, socket.error):
+                    self.disable()
+            else:
                 self.disable()
 
     def disable(self):
@@ -259,7 +267,7 @@ class Debugger:
 
     @handle('<init>')
     def _init(self, node):
-        file = node.getAttribute('fileuri')[7:]
+        file = node.getAttribute('fileuri')
         self.ui.set_srcview(file, 1)
 
     handle('status')(_status)

@@ -220,7 +220,7 @@ class Debugger:
             </copyright>
         </init>"""
      
-        file = res.firstChild.getAttribute('fileuri')[7:]
+        file = res.firstChild.getAttribute('fileuri')
         self.ui.set_srcview(file, 1)
 
     def handle_response_error(self, res):
@@ -240,7 +240,7 @@ class Debugger:
 
             self.stacks = []
             for s in stacks:
-                self.stacks.append( {'file': s.getAttribute('filename')[7:],
+                self.stacks.append( {'file': s.getAttribute('filename'),
                                      'line': int(s.getAttribute('lineno')),
                                      'where': s.getAttribute('where'),
                                      'level': int(s.getAttribute('level'))

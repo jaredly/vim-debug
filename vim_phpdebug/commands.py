@@ -53,7 +53,9 @@ def start(url = None):
     if debugger and debugger.started:
         return
     if url is not None:
-        if url.isdigit():
+        if url == '.':
+            pass
+        elif url.isdigit():
             urls = load_urls()
             num = int(url)
             if num < 0 or num >= len(urls):
@@ -66,17 +68,25 @@ def start(url = None):
             save_url(url)
         if url is not None:
             debugger = Debugger()
+            if url == '.':
+                fname = vim.current.buffer.name
+                if not (os.path.exists(fname) and fname.endswith('.py')):
+                    print 'Current file is not python (or doesn\'t exist on your hard drive)'
+                    return
             debugger.init_vim()
             global _commands
             _commands = debugger.commands()
-            debugger.start_url(url)
+            if url == '.':
+                debugger.start_py(fname)
+            else:
+                debugger.start_url(url)
             return
     urls = load_urls()
     if not urls:
         print 'No saved sessions'
     for i, url in enumerate(urls):
         print '    %d) %s' % (i, url)
-    print 'usage: start [url or number]'
+    print 'usage: dbg [url or number]'
 
 session_path = os.path.expanduser('~/.vim/vim_phpdebug.sess')
 

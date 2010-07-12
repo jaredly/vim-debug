@@ -67,6 +67,15 @@ class WatchWindow:
         self.expressions.destroy()
         self.results.destroy()
 
+def get_text(node):
+    data = node.firstChild.data
+    if node.getAttribute('encoding') == 'base64':
+        return base64.decodestring(data)
+    return data
+
+def get_child_text(node, child_tag):
+    return get_text(node.getElementsByTagName(child_tag)[0])
+
 class ScopeWindow(VimWindow):
     ''' lists the current scope (context) '''
 
@@ -77,15 +86,20 @@ class ScopeWindow(VimWindow):
         self.clear()
         for child in node.getElementsByTagName('property'):
             name = child.getAttribute('fullname')
-            if not child.firstChild:
-                text = ''
-            elif hasattr(child.firstChild, 'data'):
-                text = child.firstChild.data
-            else:
-                text = ''
             type = child.getAttribute('type')
-            if child.hasAttribute('encoding') and child.getAttribute('encoding') == 'base64':
-                text = base64.decodestring(text)
+            children = child.getAttribute('children')
+            if not name and children == '0':
+                text = get_child_text(child, 'value')
+                name = get_child_text(child, 'fullname')
+            else:
+                if not child.firstChild:
+                    text = ''
+                elif hasattr(child.firstChild, 'data'):
+                    text = child.firstChild.data
+                else:
+                    text = ''
+                if child.hasAttribute('encoding') and child.getAttribute('encoding') == 'base64':
+                    text = base64.decodestring(text)
             self.write('%-20s = %-10s /* type: %s */' % (name, text, type))
 
 help_text = '''\
