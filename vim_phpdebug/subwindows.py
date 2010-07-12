@@ -82,7 +82,10 @@ class WatchWindow:
         l = len(self.results.buffer)
         for a in range(len(self.results.buffer)-1, line):
             self.results.buffer.append('')
-        self.results.buffer[line] = str(get_text(node))
+        res = str(get_child_text(node, 'property'))
+        if not res:
+            res = str(get_text(node))
+        self.results.buffer[line] = res
 
 def get_text(node):
     if not hasattr(node.firstChild, 'data'):
