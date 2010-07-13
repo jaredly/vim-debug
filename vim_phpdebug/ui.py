@@ -21,6 +21,7 @@ class DebugUI:
         self.winbuf   = {}
         self.breaks   = {}
         self.waiting  = {}
+        self.toremove = {}
         self.cursign  = None
         self.sessfile = "/tmp/debugger_vim_saved_session." + str(os.getpid())
         self.minibufexpl = minibufexpl
@@ -118,6 +119,9 @@ class DebugUI:
     def queue_break(self, tid, file, line):
         self.waiting[tid] = file, line
 
+    def queue_break_remove(self, tid, bid):
+        self.toremove[tid] = bid
+
     def set_break(self, tid, bid):
         if tid in self.waiting:
             file, line = self.waiting[tid]
@@ -126,7 +130,8 @@ class DebugUI:
         else:
             pass # print 'failed to set breakpoint... %d : %s' % (tid, self.waiting)
 
-    def clear_break(self, bid):
+    def clear_break(self, tid):
+        bid = self.toremove.pop(tid)
         if bid in self.breaks:
             file, line, tid = self.breaks[bid]
             vim.command('sign unplace %d file=%s' % (tid, file))

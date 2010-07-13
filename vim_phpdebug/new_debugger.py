@@ -220,6 +220,8 @@ class Debugger:
             self.ui.queue_break(tid, file, row)
             self.bend.command('breakpoint_set', 't', 'line', 'f', 'file://' + file, 'n', row, data='')
         else:
+            tid = self.bend.cid + 1
+            self.ui.queue_break_remove(tid, bid)
             self.bend.command('breakpoint_remove', 'd', bid)
 
     @cmd('h', 'here', help='continue execution until the cursor (tmp breakpoint)', lead='h')
@@ -251,7 +253,7 @@ class Debugger:
 
     @handle('breakpoint_remove')
     def _breakpoint_remove(self, node):
-        self.ui.clear_break(node.firstChild.getAttribute('id'))
+        self.ui.clear_break(int(node.getAttribute('transaction_id')))
         self.ui.go_srcview()
 
     def _status(self, node):
