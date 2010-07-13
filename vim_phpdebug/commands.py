@@ -7,6 +7,11 @@ from new_debugger import Debugger
 
 import shlex
 
+def get_vim(name, default, fn=str):
+    if vim.eval('exists("%s")' % name) == '1':
+        return vim.eval(name)
+    return default
+
 _old_commands = _commands = {}
 def debugger_cmd(plain):
     global _commands, debugger
@@ -21,8 +26,12 @@ def debugger_cmd(plain):
         args = []
     if name not in _commands:
         print '[usage:] dbg command [options]'
+        tpl = ' - %-7s :: %s'
+        leader = get_vim('mapleader', '\\')
         for command in _commands:
-            print ' - ', command, '      ::', _commands[command]['options'].get('help', '')
+            print tpl % (command, _commands[command]['options'].get('help', ''))
+            if 'lead' in _commands[command]['options']:
+                print '           shortcut: %s%s' % (leader, _commands[command]['options']['lead'])
         return
     cmd = _commands[name]
     try:

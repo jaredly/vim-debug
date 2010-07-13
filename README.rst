@@ -26,6 +26,42 @@ Planned:
 
 - conditional breakpoints
 
+To start your debug session, use the following variants::
+
+   Usage: Dbg - (no auto start)
+          Dbg . (autostart current file -- python)
+          Dbg url (autostart a URL -- PHP)
+          Dbg num (autostart a past url -- PHP)
+
+For PHP urls, vim-debug keeps track of the last 5 urls you debugged -- so you
+don't have to keep typing them in.
+
+Debugger commands::
+
+   [usage:] dbg command [options]
+   - quit    :: exit the debugger
+   - run     :: continue execution until a breakpoint is reached or the program ends
+            shortcut: \r
+   - stop    :: exit the debugger
+   - over    :: step over next function call
+            shortcut: \o
+   - watch   :: execute watch functions
+            shortcut: \w
+   - up      :: go up the stack
+            shortcut: \u
+   - here    :: continue execution until the cursor (tmp breakpoint)
+            shortcut: \h
+   - down    :: go down the stack
+            shortcut: \d
+   - exit    :: exit the debugger
+   - eval    :: eval some code
+   - break   :: set a breakpoint
+            shortcut: \b
+   - into    :: step into next function call
+            shortcut: \i
+   - out     :: step out of current function call
+            shortcut: \t
+
 Screenshot: `[full size]
 <http://jaredforsyth.com/media/uploads/images/vim_debug.jpeg>`_
 

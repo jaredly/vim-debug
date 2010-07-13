@@ -58,7 +58,7 @@ class Registrar:
 
 class CmdRegistrar(Registrar):
     def add(self, func, args, kwds):
-        lead = kwds.pop('lead', '')
+        lead = kwds.get('lead', '')
         if lead:
             vim.command('map <Leader>%s :Dbg %s<cr>' % (lead, args[0]))
         dct = {'function':func, 'options':kwds}
@@ -172,12 +172,12 @@ class Debugger:
     ''' setup + register vim commands '''
     cmd = CmdRegistrar()
 
-    cmd('o', 'over', help='step over next function call', lead='o')('step_over')
-    cmd('i', 'into', help='step into next function call', lead='i')('step_into')
+    cmd('over', help='step over next function call', lead='o')('step_over')
+    cmd('into', help='step into next function call', lead='i')('step_into')
     cmd('out', help='step out of current function call', lead='t')('step_out')
-    cmd('r', 'run', help='continue execution until a breakpoint is reached or the program ends', lead='r')('run')
+    cmd('run', help='continue execution until a breakpoint is reached or the program ends', lead='r')('run')
     
-    @cmd('e', 'eval', help='eval some code', plain=True)
+    @cmd('eval', help='eval some code', plain=True)
     def eval_(self, code):
         self.bend.command('eval', data=code)
         self.bend.command('context_get')
@@ -188,15 +188,15 @@ class Debugger:
         self.ui.close()
         vim_quit()
 
-    @cmd('u', 'up', help='go up the stack', lead='u')
+    @cmd('up', help='go up the stack', lead='u')
     def up(self):
         self.ui.stack_up()
 
-    @cmd('d', 'down', help='go down the stack', lead='d')
+    @cmd('down', help='go down the stack', lead='d')
     def down(self):
         self.ui.stack_down()
 
-    @cmd('w', 'watch', help='execute watch functions', lead='w')
+    @cmd('watch', help='execute watch functions', lead='w')
     def watch(self):
         lines = self.ui.windows['watch'].expressions.buffer
         self.watching = {}
@@ -207,7 +207,7 @@ class Debugger:
             self.watching[tid] = i+1
         self.bend.get_packets()
 
-    @cmd('b', 'break', help='set a breakpoint', lead='b')
+    @cmd('break', help='set a breakpoint', lead='b')
     def break_(self):
         (row, col) = vim.current.window.cursor
         file = os.path.abspath(vim.current.buffer.name)
@@ -224,7 +224,7 @@ class Debugger:
             self.ui.queue_break_remove(tid, bid)
             self.bend.command('breakpoint_remove', 'd', bid)
 
-    @cmd('h', 'here', help='continue execution until the cursor (tmp breakpoint)', lead='h')
+    @cmd('here', help='continue execution until the cursor (tmp breakpoint)', lead='h')
     def here(self):
         (row, col) = vim.current.window.cursor
         file = os.path.abspath(vim.current.buffer.name)
