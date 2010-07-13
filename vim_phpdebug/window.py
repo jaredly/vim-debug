@@ -79,4 +79,10 @@ class VimWindow:
             vim.command(str(winnr) + 'wincmd w')
         vim.command(cmd)
 
+    def focus(self):
+        self.prepare()
+        winnr = self.getwinnr()
+        if winnr != int(vim.eval("winnr()")):
+            vim.command(str(winnr) + 'wincmd w')
+
 # vim: et sw=4 sts=4

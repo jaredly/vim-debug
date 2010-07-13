@@ -82,10 +82,14 @@ class WatchWindow:
         l = len(self.results.buffer)
         for a in range(len(self.results.buffer)-1, line):
             self.results.buffer.append('')
-        prop = node.getElementsByTagName('property')[0]
-        res = str(get_text(prop))
-        if not res:
-            res = str(get_child_text(prop, 'value'))
+        errors = node.getElementsByTagName('error')
+        if len(errors):
+            res = 'ERROR: ' + str(get_child_text(errors[0], 'message'))
+        else:
+            prop = node.getElementsByTagName('property')[0]
+            res = str(get_text(prop))
+            if not res:
+                res = str(get_child_text(prop, 'value'))
         self.results.buffer[line] = res
 
 def get_text(node):

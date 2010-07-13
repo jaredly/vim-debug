@@ -301,6 +301,7 @@ class Debugger:
         id = int(node.getAttribute('transaction_id'))
         if id in self.watching:
             self.ui.windows['watch'].set_result(self.watching.pop(id), node)
+            self.ui.windows['watch'].expressions.focus()
 
     handle('property_get')(_log)
     handle('property_set')(_log)
