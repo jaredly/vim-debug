@@ -1,7 +1,7 @@
 .. Maintainer: Jared Forsyth <jared@jaredforsyth.com>
 .. Source: http://github.com/jabapyth/vim-phpdebug
 
-This plugin creates an integrated debugging environment in VIM for PHP debugging.
+This plugin creates an integrated debugging environment in VIM.
 
 Features:
 
@@ -10,17 +10,27 @@ Features:
 - live stack view
 - breakpoint set/remove
 
-Planned:
+**New:**
 
-- live interactive console (through eval)
-- conditional breakpoints
-- watch expressions
+- watch expressions!
 - live scope view
 
-Screenshot: `[full size] <http://jaredforsyth.com/media/uploads/Terminal_019.jpeg>`_
+**New things that your average user probably won't appreciate, but anyone
+wanting to hack at it should:**
 
-.. image:: http://jaredforsyth.com/media/uploads/Terminal_019.jpeg
-    :width: 450
+- It's now in a true python package
+- modularized
+- cleaned up, substantially rewritted for consistency
+
+Planned:
+
+- conditional breakpoints
+
+Screenshot: `[full size]
+<http://jaredforsyth.com/media/uploads/images/vim_debug.jpeg>`_
+
+.. image:: http://jaredforsyth.com/media/uploads/images/vim_debug.jpeg
+   :width: 450
 
 `xdebug docs <http://www.xdebug.org/docs-dbgp.php>`_
 
