@@ -96,14 +96,14 @@ endif
 python << EOF
 import vim
 try:
-    from vim_phpdebug.commands import debugger_cmd
-    vim.command('let has_phpdebug = 1')
+    from vim_debug.commands import debugger_cmd
+    vim.command('let has_debug = 1')
 except ImportError, e:
-    vim.command('let has_phpdebug = 0')
-    print 'python module vim_phpdebug not found...'
+    vim.command('let has_debug = 0')
+    print 'python module vim_debug not found...'
 EOF
 
-if !has_phpdebug
+if !has_debug
     finish
 endif
 
