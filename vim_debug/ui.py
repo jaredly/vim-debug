@@ -57,6 +57,9 @@ class DebugUI:
 
         vim.command('sign unplace 1')
         vim.command('sign unplace 2')
+        for bid in self.breaks.keys():
+            file, line, tid = self.breaks.pop(bid)
+            vim.command('sign unplace %d file=%s' % (tid, file))
 
         # destory all created windows
         self.destroy()
@@ -133,7 +136,7 @@ class DebugUI:
     def clear_break(self, tid):
         bid = self.toremove.pop(tid)
         if bid in self.breaks:
-            file, line, tid = self.breaks[bid]
+            file, line, tid = self.breaks.pop(bid)
             vim.command('sign unplace %d file=%s' % (tid, file))
         else:
             print 'failed to remove', bid
