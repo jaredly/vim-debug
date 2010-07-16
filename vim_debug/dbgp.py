@@ -80,11 +80,13 @@ class PacketSocket:
         #                                                                      self.options.get('wait', 5))
         self.connected = False
         serv = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-        socket.setdefaulttimeout(self.options.get('wait', 10))
+        socket.setdefaulttimeout(5)
+        serv.settimeout(5)
         try:
             serv.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
             serv.bind(('', self.options.get('port', 9000)))
             serv.listen(self.options.get('listens', 5))
+            print 'waiting for a connection'
             (self.sock, address) = serv.accept()
         except socket.timeout:
             serv.close()
