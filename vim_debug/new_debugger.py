@@ -1,7 +1,6 @@
 import subprocess
 import textwrap
 import socket
-import gconf
 import vim
 import os
 
