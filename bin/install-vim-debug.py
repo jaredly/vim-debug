@@ -47,6 +47,8 @@ else:
     print>>sys.stderr, 'No $VIM directory found'
     sys.exit(1)
 vim_dir = os.path.join(vim_dir, 'plugin')
+if not os.path.exists(vim_dir):
+    os.makedirs(vim_dir)
 fname = os.path.join(vim_dir, 'debugger.vim')
 if os.path.exists(fname):
     print>>sys.stderr, 'Looks like it\'s already installed (at %s)' % fname
