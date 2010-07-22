@@ -39,7 +39,7 @@ sign define breakpt text=B>  texthl=DbgBreakPt linehl=DbgBreakPt
 import os, platform, sys
 which = platform.system()
 user = os.path.expanduser('~')
-if which == 'Linux':
+if (which == 'Linux') or (which == 'Darwin'):
     vim_dir = os.path.join(user, '.vim')
 elif which == 'Windows':
     vim_dir = os.path.join(user, 'vimfiles')
