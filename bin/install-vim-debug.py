@@ -39,13 +39,15 @@ sign define breakpt text=B>  texthl=DbgBreakPt linehl=DbgBreakPt
 import os, platform, sys
 which = platform.system()
 user = os.path.expanduser('~')
-if (which == 'Linux') or (which == 'Darwin'):
-    vim_dir = os.path.join(user, '.vim')
-elif which == 'Windows':
-    vim_dir = os.path.join(user, 'vimfiles')
-else:
-    print>>sys.stderr, 'No $VIM directory found'
-    sys.exit(1)
+vim_dir = os.environ.get('VIM')
+if vim_dir is None:
+    if (which == 'Linux') or (which == 'Darwin'):
+        vim_dir = os.path.join(user, '.vim')
+    elif which == 'Windows':
+        vim_dir = os.path.join(user, 'vimfiles')
+    else:
+        print>>sys.stderr, 'No $VIM directory found'
+        sys.exit(1)
 vim_dir = os.path.join(vim_dir, 'plugin')
 if not os.path.exists(vim_dir):
     os.makedirs(vim_dir)
