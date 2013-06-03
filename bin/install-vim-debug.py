@@ -13,6 +13,10 @@ if !has("python")
     finish
 endif
 
+" set this to 0 to enable the automatic mappings
+" any other value will disable the mappings
+let g:vim_debug_disable_mappings = 0
+
 python << EOF
 import vim
 try:
