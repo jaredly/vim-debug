@@ -61,7 +61,7 @@ class CmdRegistrar(Registrar):
 
         disabled_mappings = False
         if vim.eval("exists('g:vim_debug_disable_mappings')") != "0":
-            disabled_mappings = vim.eval("g:vim_debug_disable_mappings") != "1"
+            disabled_mappings = vim.eval("g:vim_debug_disable_mappings") != "0"
 
         if lead and not disabled_mappings:
             vim.command('map <Leader>%s :Dbg %s<cr>' % (lead, args[0]))
