@@ -7,7 +7,7 @@ setup(
     name='vim-debug',
     maintainer='Jared Forsyth',
     maintainer_email='jared@jaredforsyth.com',
-    version='1.5.1',
+    version='1.5.2',
     url='http://jaredforsyth.com/projects/vim-debug/',
     packages=['vim_debug'],
     description='a plugin for vim that creates an integrated debugging environment',
