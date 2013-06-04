@@ -41,26 +41,31 @@ Debugger commands::
    [usage:] dbg command [options]
    - quit    :: exit the debugger
    - run     :: continue execution until a breakpoint is reached or the program ends
-            shortcut: \r
+            default shortcut: \r
    - stop    :: exit the debugger
    - over    :: step over next function call
-            shortcut: \o
+            default shortcut: \o
    - watch   :: execute watch functions
-            shortcut: \w
+            default shortcut: \w
    - up      :: go up the stack
-            shortcut: \u
+            default shortcut: \u
    - here    :: continue execution until the cursor (tmp breakpoint)
-            shortcut: \h
+            default shortcut: \h
    - down    :: go down the stack
-            shortcut: \d
+            default shortcut: \d
    - exit    :: exit the debugger
    - eval    :: eval some code
    - break   :: set a breakpoint
-            shortcut: \b
+            default shortcut: \b
    - into    :: step into next function call
-            shortcut: \i
+            default shortcut: \i
    - out     :: step out of current function call
-            shortcut: \t
+            default shortcut: \t
+
+To disable the default mappings you can set the "g:vim_debug_disable_mappings" to a value
+different than 0 in the debugger.vim file.
+
+Note: The debugger.vim file is installed by the install-vim-debug.py command in the ``$VIM/plugins/`` directory.
 
 Screenshot: `[full size]
 <http://jaredforsyth.com/media/uploads/images/vim_debug.jpeg>`_

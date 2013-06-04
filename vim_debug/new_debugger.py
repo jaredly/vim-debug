@@ -58,7 +58,12 @@ class Registrar:
 class CmdRegistrar(Registrar):
     def add(self, func, args, kwds):
         lead = kwds.get('lead', '')
-        if lead:
+
+        disabled_mappings = False
+        if vim.eval("exists('g:vim_debug_disable_mappings')") != "0":
+            disabled_mappings = vim.eval("g:vim_debug_disable_mappings") != "1"
+
+        if lead and not disabled_mappings:
             vim.command('map <Leader>%s :Dbg %s<cr>' % (lead, args[0]))
         dct = {'function':func, 'options':kwds}
         for name in args:
