@@ -90,7 +90,7 @@ For example::
 Installation
 ------------
 
-Execute the following commands:
+Execute the following commands::
 
     sudo pip install dbgp vim-debug
     install-vim-debug.py
