@@ -26,7 +26,7 @@ Features
 
 * Live scope view
 
-* Some improvements to make it easier to hack at it
+* Some improvements to make it easier to hack
 
   * It's now in a true python package
 
@@ -50,7 +50,8 @@ To start your debug session, use the following variants::
           Dbg url (autostart a URL -- PHP)
           Dbg num (autostart a past url -- PHP)
 
-Note: for PHP urls, vim-debug keeps track of the last 5 urls you debugged -- so you don't have to keep typing them in.
+Note: for PHP urls, vim-debug keeps track of the last 5 urls you debugged --
+so you don't have to keep typing them in.
 
 Debugger commands::
 
@@ -78,7 +79,7 @@ Debugger commands::
    - out     :: step out of current function call
             default shortcut: \t
 
-To disable the default mappings you can set the ``g:vim_debug_disable_mappings`` to a value
+To disable the default mappings, set the variable ``g:vim_debug_disable_mappings`` to a value
 different than 0 in the debugger.vim file.
 
 For example::
@@ -89,14 +90,14 @@ For example::
 Installation
 ------------
 
-Execute this commands::
+Execute the following commands:
 
     sudo pip install dbgp vim-debug
     install-vim-debug.py
 
 Note: the ``install-vim-debug.py`` command installs the ``debugger.vim`` in your ``$VIM/plugins/`` directory.
 
-How does it looks like?
+Take a look
 ----------------------
 
 Screenshot: `[full size]
