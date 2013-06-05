@@ -1,30 +1,47 @@
+.. |vim-debug-logo| image:: https://raw.github.com/jabapyth/vim-debug/master/logo.png
+
+|vim-debug-logo| vim-debug
+=========================
+
 .. Maintainer: Jared Forsyth <jared@jaredforsyth.com>
 .. Source: http://github.com/jabapyth/vim-phpdebug
 
 This plugin creates an integrated debugging environment in VIM.
 
-Features:
+It supports python and php.
 
-- integration with xdebug
-- step (into/over/out)
-- live stack view
-- breakpoint set/remove
 
-**New:**
+Features
+--------
 
-- watch expressions!
-- live scope view
+* Integration with xdebug
 
-**New things that your average user probably won't appreciate, but anyone
-wanting to hack at it should:**
+* Step (into/over/out)
 
-- It's now in a true python package
-- modularized
-- cleaned up, substantially rewritted for consistency
+* Live stack view
+
+* Breakpoint set/remove
+
+* Watch expressions
+
+* Live scope view
+
+* Some improvements to make it easier to hack at it
+
+  * It's now in a true python package
+
+  * Modularized
+
+  * Cleaned up, substantially rewritten for consistency
+
 
 Planned:
 
-- conditional breakpoints
+* Conditional breakpoints
+
+
+Usage
+-----
 
 To start your debug session, use the following variants::
 
@@ -33,8 +50,7 @@ To start your debug session, use the following variants::
           Dbg url (autostart a URL -- PHP)
           Dbg num (autostart a past url -- PHP)
 
-For PHP urls, vim-debug keeps track of the last 5 urls you debugged -- so you
-don't have to keep typing them in.
+Note: for PHP urls, vim-debug keeps track of the last 5 urls you debugged -- so you don't have to keep typing them in.
 
 Debugger commands::
 
@@ -62,10 +78,26 @@ Debugger commands::
    - out     :: step out of current function call
             default shortcut: \t
 
-To disable the default mappings you can set the "g:vim_debug_disable_mappings" to a value
+To disable the default mappings you can set the ``g:vim_debug_disable_mappings`` to a value
 different than 0 in the debugger.vim file.
 
-Note: The debugger.vim file is installed by the install-vim-debug.py command in the ``$VIM/plugins/`` directory.
+For example::
+
+    let g:vim_debug_disable_mappings = 1
+
+
+Installation
+------------
+
+Execute this commands::
+
+    sudo pip install dbgp vim-debug
+    install-vim-debug.py
+
+Note: the ``install-vim-debug.py`` command installs the ``debugger.vim`` in your ``$VIM/plugins/`` directory.
+
+How does it looks like?
+----------------------
 
 Screenshot: `[full size]
 <http://jaredforsyth.com/media/uploads/images/vim_debug.jpeg>`_
@@ -73,9 +105,19 @@ Screenshot: `[full size]
 .. image:: http://jaredforsyth.com/media/uploads/images/vim_debug.jpeg
    :width: 450
 
-`xdebug docs <http://www.xdebug.org/docs-dbgp.php>`_
+A screencast tutorial: https://www.youtube.com/watch?v=kairdgZCD1U
 
-**Credits:**
+
+Some links of interest
+----------------------
+
+`Python package installer <http://pypi.python.org/pypi/pip>`_
+
+`Xdebug docs <http://www.xdebug.org/docs-dbgp.php>`_
+
+
+Credits
+-------
 
 :Sam Ghods: `(last activity 6/21/07) <http://www.vim.org/scripts/script.php?script_id=1929>`_
 :Seung Woo Shin: `(last activity 12/7/04) <http://www.vim.org/scripts/script.php?script_id=1152>`_
