@@ -2,6 +2,7 @@ import subprocess
 import textwrap
 import socket
 import vim
+import sys
 import os
 
 from ui import DebugUI
@@ -91,8 +92,10 @@ class Debugger:
             url += '?'
         url += 'XDEBUG_SESSION_START=vim_phpdebug'
         self._type = 'php'
+        # only linux and mac supported atm
+        command = 'xdg-open' if sys.platform.startswith('linux') else 'open'
         try:
-            subprocess.Popen(('xdg-open', url), stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+            subprocess.Popen((command, url), stdout=subprocess.PIPE, stderr=subprocess.PIPE)
         except OSError:
             print 'failed to start a browser. aborting debug session'
             return
