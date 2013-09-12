@@ -2,6 +2,7 @@ import subprocess
 import textwrap
 import socket
 import vim
+import sys
 import os
 
 from ui import DebugUI
@@ -91,30 +92,13 @@ class Debugger:
             url += '?'
         url += 'XDEBUG_SESSION_START=vim_phpdebug'
         self._type = 'php'
+        # only linux and mac supported atm
+        command = 'xdg-open' if sys.platform.startswith('linux') else 'open'
         try:
-            import gconf
-            browser = gconf.Client().get_string('/desktop/gnome/applications/browser/exec')
-            if browser is None:
-                raise ValueError
-            subprocess.Popen((browser, url), stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-        except ImportError: # don't have gconf
-            print 'gconf not found...',
-        except ValueError:
-            print 'no default browser found...',
+            subprocess.Popen((command, url), stdout=subprocess.PIPE, stderr=subprocess.PIPE)
         except OSError:
-            print 'default browser failed...',
-        else:
-            return self.start()
-        # TODO: allow custom browsers
-        print 'trying chrome, firefox'
-        try:
-            subprocess.Popen(('google-chrome', url), stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-        except OSError:
-            try:
-                subprocess.Popen(('firefox', url), stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-            except OSError:
-                print 'neither chrome nor firefox were found. failed to start debug session.'
-                return
+            print 'failed to start a browser. aborting debug session'
+            return
         return self.start()
 
     def start_py(self, fname):
