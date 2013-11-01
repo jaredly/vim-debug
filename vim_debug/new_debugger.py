@@ -44,7 +44,7 @@ class Registrar:
         else:
             self.reg.append({'function':func, 'args':args, 'kwds':kwds})
         return func
-    
+
     def bind(self, inst):
         res = {}
         for key, value in self.reg.iteritems():
@@ -77,7 +77,7 @@ class Debugger:
         self.started = False
         self.watching = {}
         self._type = None
-    
+
     def init_vim(self):
         self.ui = DebugUI()
         self.settings = {}
@@ -102,7 +102,12 @@ class Debugger:
         return self.start()
 
     def start_py(self, fname):
-        subprocess.Popen(('pydbgp.py', '-d', 'localhost:9000', fname), stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+        if os.name == 'nt':
+            PYDBGPATH = "C:/Python27/Lib/site-packages/dbgp-1.1-py2.7.egg/EGG-INFO/scripts/"
+            subprocess.Popen(('python.exe',PYDBGPATH+'pydbgp.py', '-d', 'localhost:9000', fname), stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+        else:
+            subprocess.Popen(('pydbgp.py', '-d', 'localhost:9000', fname), stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+
         self._type = 'python'
         return self.start()
 
@@ -164,7 +169,7 @@ class Debugger:
     cmd('into', help='step into next function call', lead='i')('step_into')
     cmd('out', help='step out of current function call', lead='t')('step_out')
     cmd('run', help='continue execution until a breakpoint is reached or the program ends', lead='r')('run')
-    
+
     @cmd('eval', help='eval some code', plain=True)
     def eval_(self, code):
         self.bend.command('eval', data=code)
@@ -223,7 +228,7 @@ class Debugger:
         # self.ui.queue_break(tid, file, row)
         self.bend.command('breakpoint_set', 't', 'line', 'r', '1', 'f', 'file://' + file, 'n', row, data='')
         self.bend.command('run')
-    
+
     def commands(self):
         self._commands = self.cmd.bind(self)
         return self._commands
