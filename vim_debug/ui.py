@@ -164,6 +164,11 @@ class DebugUI:
 
     def set_srcview(self, file, line):
         """ set srcview windows to file:line and replace current sign """
+        if os.name == 'nt':
+            file = os.path.normpath(file)
+            file = file[6:]
+        else:
+            pass
 
         if file.startswith('file:'):
             file = file[len('file:'):]
@@ -181,6 +186,7 @@ class DebugUI:
             vim.command('silent edit! ' + file)
 
         cmd = 'sign place %s name=current line=%s file=%s' % (nextsign, line, file)
+
         vim.command(str(cmd))
         vim.command('sign unplace ' + self.cursign)
 
