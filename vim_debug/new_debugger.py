@@ -4,6 +4,7 @@ import socket
 import vim
 import sys
 import os
+import imp
 
 from ui import DebugUI
 from dbgp import DBGP
