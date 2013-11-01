@@ -103,8 +103,9 @@ class Debugger:
 
     def start_py(self, fname):
         if os.name == 'nt':
-            PYDBGPATH = "C:/Python27/Lib/site-packages/dbgp-1.1-py2.7.egg/EGG-INFO/scripts/"
-            subprocess.Popen(('python.exe',PYDBGPATH+'pydbgp.py', '-d', 'localhost:9000', fname), stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+            _,PYDBGP,_ = imp.find_module('dbgp')
+            PYDBGP = PYDBGP + '/../EGG-INFO/scripts/pydbgp.py'
+            subprocess.Popen(('python.exe',PYDBGP, '-d', 'localhost:9000', fname), stdout=subprocess.PIPE, stderr=subprocess.PIPE)
         else:
             subprocess.Popen(('pydbgp.py', '-d', 'localhost:9000', fname), stdout=subprocess.PIPE, stderr=subprocess.PIPE)
 
