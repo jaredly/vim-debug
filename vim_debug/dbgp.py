@@ -1,4 +1,3 @@
-
 import socket
 import base64
 import xml.dom.minidom
@@ -80,7 +79,7 @@ class PacketSocket:
         #                                                                      self.options.get('wait', 5))
         self.connected = False
         serv = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-        socket.setdefaulttimeout(5)
+        socket.setdefaulttimeout(20)
         serv.settimeout(5)
         try:
             serv.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
