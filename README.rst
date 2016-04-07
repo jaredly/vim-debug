@@ -8,7 +8,7 @@
 
 This plugin creates an integrated debugging environment in VIM.
 
-It supports python and php.
+It supports Python 2 and PHP.
 
 
 Features
