@@ -10,6 +10,9 @@ This plugin creates an integrated debugging environment in VIM.
 
 It supports Python 2 and PHP.
 
+License
+-------
+MIT
 
 Features
 --------
