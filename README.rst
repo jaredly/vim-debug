@@ -10,6 +10,12 @@ This plugin creates an integrated debugging environment in VIM.
 
 It supports Python 2 and PHP.
 
+Support Status
+--------------
+Seeking maintainer! I haven't used this actively in many years, and it's likely that alternatives have cropped up that are better. If you know one (or find one) please PR this readme and put a link [here] :D
+If you want to make this package better, open an issue asking to be a maintainer!
+Thanks
+
 License
 -------
 MIT
