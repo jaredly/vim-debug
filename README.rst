@@ -1,7 +1,7 @@
 .. |vim-debug-logo| image:: https://raw.github.com/jabapyth/vim-debug/master/logo.png
 
 |vim-debug-logo| vim-debug
-=========================
+==========================
 
 .. Maintainer: Jared Forsyth <jared@jaredforsyth.com>
 .. Source: http://github.com/jabapyth/vim-phpdebug
@@ -101,10 +101,13 @@ Installation
 
 Execute the following commands::
 
-    sudo pip install dbgp vim-debug
-    install-vim-debug.py
+    sudo pip install dbgp
 
-Note: the ``install-vim-debug.py`` command installs the ``debugger.vim`` in your ``$VIM/plugins/`` directory.
+and then use your preferred vim plugin manage (`pathogen
+<https://github.com/tpope/vim-pathogen>`_, `Vundle
+<https://github.com/gmarik/vundle>`_, `vim-plug
+<https://github.com/junegunn/vim-plug>`_, et al.) and install this
+repository (``jaredly/vim-debug``) as appropriate for the given manager.
 
 Take a look
 ----------------------
