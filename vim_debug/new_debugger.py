@@ -108,7 +108,8 @@ class Debugger:
             PYDBGP = PYDBGP + '/../EGG-INFO/scripts/pydbgp.py'
             subprocess.Popen(('python.exe',PYDBGP, '-d', 'localhost:9000', fname), stdout=subprocess.PIPE, stderr=subprocess.PIPE)
         else:
-            subprocess.Popen(('pydbgp.py', '-d', 'localhost:9000', fname), stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+            with_args = ('pydbgp.py', '-d', 'localhost:9000') + tuple(fname.split())
+            subprocess.Popen(with_args, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
 
         self._type = 'python'
         return self.start()

@@ -57,7 +57,7 @@ def cmd(name, help='', plain=False):
 
 debugger = None
 
-def start(url = None):
+def start(url = None, *args):
     global debugger
     if debugger and debugger.started:
         return
@@ -85,7 +85,8 @@ def start(url = None):
                 if not (os.path.exists(fname) and fname.endswith('.py')):
                     print 'Current file is not python (or doesn\'t exist on your hard drive)'
                     return
-                debugger.start_py(fname)
+                full_cmds = "{} {}".format(fname, " ".join(args))
+                debugger.start_py(full_cmds)
             elif url == '-':
                 debugger.start()
             else:

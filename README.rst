@@ -55,7 +55,7 @@ Usage
 To start your debug session, use the following variants::
 
    Usage: Dbg - (no auto start)
-          Dbg . (autostart current file -- python)
+          Dbg . [args] (autostart current file -- python)
           Dbg url (autostart a URL -- PHP)
           Dbg num (autostart a past url -- PHP)
 
