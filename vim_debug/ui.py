@@ -61,7 +61,7 @@ class DebugUI:
             file, line, tid = self.breaks.pop(bid)
             vim.command('sign unplace %d file=%s' % (tid, file))
 
-        # destory all created windows
+        # destroy all created windows
         self.destroy()
 
         # restore session

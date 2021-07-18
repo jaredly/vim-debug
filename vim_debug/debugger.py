@@ -43,7 +43,7 @@ from protocol import DbgProtocol
 class BreakPointManager:
     """ Breakpoint manager class """
     def __init__(self):
-        """ initalize """
+        """ initialize """
         self.breakpt = {}
         self.revmap = {}
         self.startbno = 10000
@@ -175,7 +175,7 @@ class Debugger:
     # Internal message handlers
     #
     def handle_msg(self, res):
-        """ call appropraite message handler member function, handle_XXX() """
+        """ call appropriate message handler member function, handle_XXX() """
         fc = res.firstChild
         try:
             handler = getattr(self, 'handle_' + fc.tagName)
@@ -184,7 +184,7 @@ class Debugger:
             print 'Debugger.handle_'+fc.tagName+'() not found, please see the LOG___WINDOW'
         self.ui.go_srcview()
     def handle_response(self, res):
-        """ call appropraite response message handler member function, handle_response_XXX() """
+        """ call appropriate response message handler member function, handle_response_XXX() """
         if res.firstChild.hasAttribute('reason') and res.firstChild.getAttribute('reason') == 'error':
             self.handle_response_error(res)
             return
